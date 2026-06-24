@@ -69,6 +69,7 @@ body {
   color: #fff;
   padding: 0 24px;
   height: 60px;
+  --app-bar-h: 60px;
   display: flex;
   align-items: center;
   position: sticky;
@@ -783,6 +784,7 @@ body.mdui-theme-layout-dark .loading-overlay {
   .app-bar {
     padding: 0 12px;
     height: 52px;
+    --app-bar-h: 52px;
   }
 
   .app-bar-title { font-size: 15px; }
@@ -826,7 +828,7 @@ body.mdui-theme-layout-dark .loading-overlay {
 .mobile-lang-menu {
   display: none;
   position: fixed;
-  top: 52px;
+  top: calc(var(--app-bar-h, 60px) + 4px);
   right: 8px;
   background: var(--bg-card);
   border: 1px solid var(--border);

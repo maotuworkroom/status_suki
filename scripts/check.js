@@ -319,7 +319,11 @@ async function findOpenIssue(siteName) {
 
     if (!resp.ok) return null;
     const issues = await resp.json();
-    return issues.find((i) => i.title.includes(siteName)) || null;
+    return issues.find((i) => {
+      // 精确匹配：标题包含 " 站点名 " 或 "站点名 离线" 或 "站点名 证书"
+      const title = i.title;
+      return title.includes(`] ${siteName} `) || title.endsWith(`] ${siteName}`);
+    }) || null;
   } catch {
     return null;
   }
@@ -592,6 +596,7 @@ function cleanArchives() {
   if (!fs.existsSync(ARCHIVE_DIR)) return;
 
   const manifest = loadJSON(MANIFEST_FILE, { files: [] });
+  const oldCount = manifest.files.length;
   const validFiles = [];
 
   for (const fileName of manifest.files) {
@@ -601,10 +606,10 @@ function cleanArchives() {
     }
   }
 
-  if (validFiles.length !== manifest.files.length) {
+  if (validFiles.length !== oldCount) {
     manifest.files = validFiles;
     saveJSON(MANIFEST_FILE, manifest);
-    log(`[归档] 清理了 ${manifest.files.length - validFiles.length} 个无效归档条目`);
+    log(`[归档] 清理了 ${oldCount - validFiles.length} 个无效归档条目`);
   }
 }
 

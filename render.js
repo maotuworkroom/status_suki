@@ -17,6 +17,7 @@
   let countdownSec = 60;
   const REFRESH_INTERVAL = 60;
   let _searchQuery = "";
+  let _tooltipAbort = null; // 用于取消旧的 tooltip 监听器
 
   // ── 数据加载（支持归档文件合并）──────────
 
@@ -111,6 +112,17 @@
 
   // ── 工具函数 ──────────────────────────────
 
+  /** HTML 转义，防止 XSS */
+  function esc(str) {
+    if (str == null) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   function timeAgo(isoStr) {
     if (!isoStr) return "";
     const diff = Math.floor((Date.now() - new Date(isoStr).getTime()) / 1000);
@@ -142,7 +154,12 @@
     return `<svg class="status-icon-svg red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" opacity="0.15" fill="currentColor"/><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
   }
 
-  /** 格式化持续时长 */
+  /** 安全拆分 history key "group|site"，允许名称中含 | */
+  function parseHistoryKey(key) {
+    const idx = key.indexOf("|");
+    if (idx === -1) return [key, key];
+    return [key.slice(0, idx), key.slice(idx + 1)];
+  }
   function formatDuration(ms) {
     if (ms < 1000) return ms + "ms";
     if (ms < 60000) return Math.floor(ms / 1000) + "s";
@@ -220,8 +237,8 @@
         <div class="group-card fade-in" style="animation-delay:${idx * 0.08}s">
           <div class="group-header" onclick="toggleGroup(this)">
             <div class="group-header-left">
-              <i class="mdui-icon material-icons group-icon">${group.icon || "dns"}</i>
-              <span class="group-name">${group.name}</span>
+              <i class="mdui-icon material-icons group-icon">${esc(group.icon) || "dns"}</i>
+              <span class="group-name">${esc(group.name)}</span>
             </div>
             <div class="group-header-right">
               <span class="group-count ${onlineCount < totalCount ? 'has-offline' : ''}">${t("ui.group.online", { online: onlineCount, total: totalCount })}</span>
@@ -284,11 +301,11 @@
       const siteVisible = !_searchQuery || site.name.toLowerCase().includes(_searchQuery.toLowerCase());
 
       html += `
-        <div class="site-item" data-site-name="${site.name.toLowerCase()}" style="${siteVisible ? '' : 'display:none'}">
+        <div class="site-item" data-site-name="${esc(site.name.toLowerCase())}" style="${siteVisible ? '' : 'display: none'}">
           <div class="site-row">
             <div class="site-left">
               <span class="site-status-dot ${isUp ? "up pulse" : "down pulse-red"}"></span>
-              <a class="site-name site-link" href="${site.url}" target="_blank" rel="noopener" title="${t("ui.viewSite")}: ${site.url}">${site.name}</a>
+              <a class="site-name site-link" href="${esc(site.url)}" target="_blank" rel="noopener" title="${esc(t("ui.viewSite") + ": " + site.url)}">${esc(site.name)}</a>
               ${sslHTML}
             </div>
             <div class="site-right">
@@ -301,7 +318,7 @@
             ${uptimeBarHTML}
           </div>
           <div class="chart-container">
-            <canvas id="${canvasId}" class="response-chart" data-group="${group.name}" data-site="${site.name}"></canvas>
+            <canvas id="${canvasId}" class="response-chart" data-group="${esc(group.name)}" data-site="${esc(site.name)}"></canvas>
             <div class="chart-tooltip" id="tip-${canvasId}"></div>
           </div>
         </div>
@@ -485,6 +502,11 @@
   // ── 图表 Tooltip ─────────────────────────
 
   function bindChartTooltips() {
+    // 取消旧的事件监听器，防止泄漏
+    if (_tooltipAbort) _tooltipAbort.abort();
+    _tooltipAbort = new AbortController();
+    const signal = _tooltipAbort.signal;
+
     document.querySelectorAll(".response-chart").forEach((canvas) => {
       if (!canvas._chartPts) return;
 
@@ -515,11 +537,11 @@
         tooltip.style.opacity = "1";
         tooltip.style.left = pt.x + "px";
         tooltip.style.top = (pt.y - 36) + "px";
-      });
+      }, { signal });
 
       canvas.addEventListener("mouseleave", () => {
         tooltip.style.opacity = "0";
-      });
+      }, { signal });
     });
   }
 
@@ -531,7 +553,7 @@
 
     const allIncidents = [];
     for (const [key, siteHist] of Object.entries(historyData.sites)) {
-      const [groupName, siteName] = key.split("|");
+      const [groupName, siteName] = parseHistoryKey(key);
       for (const inc of siteHist.incidents || []) {
         if (inc.end) {
           allIncidents.push({ ...inc, siteName, groupName });
@@ -557,8 +579,8 @@
         <div class="incident-row">
           <div class="incident-dot"></div>
           <div class="incident-info">
-            <div class="incident-site">${inc.siteName} <span class="incident-group">${inc.groupName}</span></div>
-            <div class="incident-detail">${inc.reason || t("ui.unknown")}</div>
+            <div class="incident-site">${esc(inc.siteName)} <span class="incident-group">${esc(inc.groupName)}</span></div>
+            <div class="incident-detail">${esc(inc.reason) || t("ui.unknown")}</div>
             <div class="incident-time">${startStr} · ${dur}</div>
           </div>
         </div>
@@ -577,7 +599,7 @@
 
     let html = "";
     for (const group of statusData.groups) {
-      html += `<div class="service-group-title">${group.name}</div>`;
+      html += `<div class="service-group-title">${esc(group.name)}</div>`;
       for (const site of group.sites) {
         const isUp = site.status === "up";
         const statusLabel = isUp ? t("services.operational") : t("services.down");
@@ -585,7 +607,7 @@
 
         html += `
           <div class="service-row">
-            <span class="service-name">${site.name}</span>
+            <span class="service-name">${esc(site.name)}</span>
             <span class="service-status ${statusClass}">
               <span class="svc-dot ${isUp ? "svc-dot-up" : "svc-dot-down"}"></span>
               ${statusLabel}
@@ -619,7 +641,7 @@
     el.className = "incident-banner fade-in";
     el.innerHTML = `
       <i class="mdui-icon material-icons">warning</i>
-      <span><strong>${t("banner.activeIncident")}</strong> — ${downSites.map((s) => s.name).join(", ")}</span>
+      <span><strong>${t("banner.activeIncident")}</strong> — ${downSites.map((s) => esc(s.name)).join(", ")}</span>
     `;
   }
 
@@ -678,6 +700,14 @@
       body.classList.add("open");
       body.style.maxHeight = body.scrollHeight + "px";
       arrow.style.transform = "rotate(180deg)";
+      // 折叠时 canvas 宽高为 0，展开后需重绘图表
+      requestAnimationFrame(() => {
+        body.querySelectorAll(".response-chart").forEach((canvas) => {
+          const g = canvas.dataset.group;
+          const s = canvas.dataset.site;
+          if (g && s) drawResponseChart(g, s);
+        });
+      });
     }
   };
 
@@ -776,10 +806,32 @@
   window.switchLang = function (lang) {
     setLanguage(lang);
     renderAll();
+    updateStaticTexts();
     document.querySelectorAll(".lang-btn").forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.lang === lang);
     });
+    document.querySelectorAll(".mobile-lang-item").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.lang === lang);
+    });
   };
+
+  /** 更新 HTML 中硬编码的静态文本为当前语言 */
+  function updateStaticTexts() {
+    const searchInput = document.getElementById("search-input");
+    if (searchInput) searchInput.placeholder = t("ui.search");
+    const expandAll = document.getElementById("expand-all-text");
+    if (expandAll) expandAll.textContent = t("ui.expandAll");
+    const collapseAll = document.getElementById("collapse-all-text");
+    if (collapseAll) collapseAll.textContent = t("ui.collapseAll");
+    const servicesHeading = document.getElementById("services-heading");
+    if (servicesHeading) servicesHeading.textContent = t("services.title");
+    const footerText = document.getElementById("footer-text");
+    if (footerText) footerText.textContent = t("footer.poweredBy") + " · © 2024";
+    const refreshHint = document.getElementById("footer-refresh-hint");
+    if (refreshHint) refreshHint.textContent = t("ui.refresh");
+    const themeHint = document.getElementById("footer-theme-hint");
+    if (themeHint) themeHint.textContent = t("ui.darkMode");
+  }
 
   // ── 初始化 ────────────────────────────────
 
@@ -799,6 +851,9 @@
     });
 
     renderAll();
+
+    // 更新 i18n 静态文本
+    updateStaticTexts();
 
     refreshTimer = setInterval(() => {
       renderAll();
