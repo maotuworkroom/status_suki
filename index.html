@@ -1,29 +1,27 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-  <title>Sukiing 服务状态</title>
-  <meta name="description" content="Sukiing圣地巡礼站服务状态 — 享你所爱之途">
-  <meta name="theme-color" content="#F8BBD0">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Sukiing">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Sukiing 服务状态">
-  <meta property="og:description" content="Sukiing圣地巡礼站服务状态监控">
-  <meta property="og:image" content="icon.png">
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon.png" type="image/png">
-  <link rel="apple-touch-icon" href="icon.png">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.2/css/mdui.min.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Sukiing 服务状态</title>
+<meta name="description" content="Sukiing圣地巡礼站服务状态 — 享你所爱之途">
+<meta name="theme-color" content="#F8BBD0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sukiing">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sukiing 服务状态">
+<meta property="og:description" content="Sukiing圣地巡礼站服务状态监控">
+<meta property="og:image" content="icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.png" type="image/png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.2/css/mdui.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- 顶栏 -->
-<header class="mdui-appbar mdui-appbar-fixed mdui-color-white mdui-shadow-1">
+<div class="mdui-appbar mdui-appbar-fixed mdui-color-white mdui-shadow-1">
   <div class="mdui-toolbar mdui-color-white" style="padding:0 12px">
     <img src="icon.png" style="height:26px;border-radius:6px;margin-right:8px" onerror="this.remove()">
     <a class="mdui-typo-headline" style="font-weight:700;font-size:16px;text-decoration:none;color:#333" href=".">Sukiing</a>
@@ -41,20 +39,17 @@
     <button class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-ripple" onclick="toggleTheme()" mdui-tooltip="{content:'主题'}"><i class="mdui-icon material-icons" id="theme-icon">dark_mode</i></button>
     <button class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-ripple refresh-btn" onclick="refreshData()" mdui-tooltip="{content:'刷新'}"><i class="mdui-icon material-icons">refresh</i></button>
   </div>
-</header>
+</div>
 
-<!-- 加载 -->
 <div id="loading-overlay" class="loading-overlay">
   <div class="mdui-spinner mdui-spinner-colorful" style="width:28px;height:28px"></div>
 </div>
 
-<!-- 正文 -->
 <main class="mdui-container" style="padding-top:76px;padding-bottom:40px;max-width:800px">
 
   <div id="incident-banner"></div>
   <div id="overall-status"></div>
 
-  <!-- 搜索 -->
   <div id="search-bar" class="mdui-card mdui-shadow-1" style="display:none;padding:6px 12px;margin-bottom:12px">
     <div style="display:flex;align-items:center;gap:6px">
       <i class="mdui-icon material-icons" style="font-size:20px;opacity:0.25">search</i>
@@ -63,7 +58,6 @@
     </div>
   </div>
 
-  <!-- 工具栏 -->
   <div id="group-toolbar" style="display:none;text-align:right;margin-bottom:6px">
     <button class="mdui-btn mdui-btn-dense mdui-ripple" onclick="expandAllGroups()" style="font-size:12px;min-width:0"><i class="mdui-icon material-icons" style="font-size:15px;margin-right:1px">unfold_more</i><span id="expand-all-text">展开全部</span></button>
     <button class="mdui-btn mdui-btn-dense mdui-ripple" onclick="collapseAllGroups()" style="font-size:12px;min-width:0"><i class="mdui-icon material-icons" style="font-size:15px;margin-right:1px">unfold_less</i><span id="collapse-all-text">收起全部</span></button>
@@ -72,7 +66,6 @@
   <div id="groups"></div>
   <div id="incident-history"></div>
 
-  <!-- 服务列表 -->
   <div class="mdui-card mdui-shadow-1" style="margin-top:12px">
     <div class="mdui-card-primary" style="padding:12px 16px 6px">
       <div class="mdui-card-primary-title" style="font-size:14px">
@@ -83,7 +76,6 @@
     <div id="services-list"></div>
   </div>
 
-  <!-- 页脚 -->
   <footer class="page-footer">
     <div style="margin-bottom:2px"><img src="icon.png" style="width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-right:4px" onerror="this.remove()"><b>Sukiing</b> · <span id="footer-text">享你所爱之途</span></div>
     <div style="font-size:11px;opacity:0.4"><span id="footer-powered">Powered by GitHub Actions</span></div>
@@ -91,7 +83,6 @@
 
 </main>
 
-<!-- 移动端语言菜单 -->
 <ul id="mobile-lang-menu" class="mdui-menu" mdui-menu>
   <li class="mdui-menu-item mdui-ripple active" data-lang="zh"><a>中文</a></li>
   <li class="mdui-menu-item mdui-ripple" data-lang="en"><a>English</a></li>

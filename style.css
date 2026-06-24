@@ -1,300 +1,58 @@
-/**
- * Sukiing 服务状态 — 最小自定义样式
- * 主体样式由 MDUI 提供，这里只补充 MDUI 不覆盖的部分
- */
+body.dark-mode{background:#121212;color:#e0e0e0}
+body.dark-mode .mdui-appbar,body.dark-mode .mdui-card,body.dark-mode .mdui-menu{background:#1e1e1e!important;color:#e0e0e0}
+body.dark-mode .mdui-color-white{background:#1e1e1e!important}
+body.dark-mode .mdui-divider,body.dark-mode .mdui-list-item{border-color:rgba(255,255,255,.06)!important}
+body.dark-mode .site-link{color:#e0e0e0!important}
+body.dark-mode .site-item{border-top-color:rgba(255,255,255,.06)!important}
+body.dark-mode .mdui-list-item-content,body.dark-mode .mdui-list-item-title,body.dark-mode .mdui-list-item-text{color:#e0e0e0!important}
+body.dark-mode .page-footer{color:rgba(255,255,255,.3)}
+body.dark-mode .mdui-color-amber-100{background:#3e2f10!important;color:#ffb74d!important}
+body.dark-mode .mdui-text-color-amber-800,body.dark-mode .mdui-text-color-amber-900{color:#ffb74d!important}
+body.dark-mode .mdui-spinner-colorful{border-color:#333;border-top-color:#F48FB1}
+body.dark-mode .uptime-day.empty{background:#333}
+body.dark-mode .chart-tooltip{background:#2a2a2a;border-color:#333;color:#e0e0e0}
+body.dark-mode .lang-switch{background:#333}
+body.dark-mode .lang-btn.active{background:#444;color:#fff}
+body.dark-mode .loading-overlay{background:rgba(18,18,18,.8)}
 
-/* ── 深色模式变量 ── */
-body.dark-mode {
-  background: #121212;
-  color: #e0e0e0;
-}
+.site-item{transition:background .1s}
+.site-item:hover{background:rgba(0,0,0,.02)}
+body.dark-mode .site-item:hover{background:rgba(255,255,255,.03)}
+.site-link:hover{color:#FF4081!important;text-decoration:underline!important}
 
-body.dark-mode .mdui-appbar,
-body.dark-mode .mdui-card {
-  background: #1e1e1e !important;
-  color: #e0e0e0;
-}
+.site-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.site-dot.dot-up{animation:pg 2.5s infinite}
+.site-dot.dot-down{animation:pr 1.5s infinite}
+@keyframes pg{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.3)}70%{box-shadow:0 0 0 5px rgba(34,197,94,0)}}
+@keyframes pr{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.35)}70%{box-shadow:0 0 0 5px rgba(239,68,68,0)}}
 
-body.dark-mode .mdui-color-white {
-  background: #1e1e1e !important;
-}
+.uptime-bar-wrap{display:flex;gap:2px;height:20px;margin:4px 0;border-radius:3px;overflow:hidden}
+.uptime-day{flex:1;border-radius:2px;min-width:0;transition:opacity .1s}
+.uptime-day:hover{opacity:.7}
+.uptime-day.empty{background:#eee;opacity:.4}
 
-body.dark-mode .mdui-divider,
-body.dark-mode .mdui-list-item {
-  border-color: rgba(255, 255, 255, 0.06) !important;
-}
+.chart-container{position:relative}
+.response-chart{width:100%;height:100px;border-radius:6px;background:rgba(0,0,0,.02);display:block}
+body.dark-mode .response-chart{background:rgba(255,255,255,.02)}
+.chart-tooltip{position:absolute;pointer-events:none;background:#fff;border:1px solid #eee;border-radius:6px;padding:5px 9px;font-size:11px;line-height:1.3;color:#333;box-shadow:0 4px 12px rgba(0,0,0,.1);opacity:0;transition:opacity .1s,left .06s,top .06s;transform:translate(-50%,0);white-space:nowrap;z-index:10}
 
-body.dark-mode .site-link {
-  color: #e0e0e0 !important;
-}
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.8);z-index:200;align-items:center;justify-content:center}
 
-body.dark-mode .site-item {
-  border-top-color: rgba(255, 255, 255, 0.06) !important;
-}
+.lang-switch{display:flex;gap:1px;margin:0 4px;background:#f0f0f0;border-radius:6px;padding:2px}
+.lang-btn{padding:2px 8px;border:none;border-radius:4px;background:transparent;color:#999;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
+.lang-btn.active{background:#fff;color:#333;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.lang-btn:hover:not(.active){color:#666}
 
-body.dark-mode .mdui-textfield-input {
-  color: #e0e0e0;
-}
+.mobile-lang-btn{display:none!important}
+@media(max-width:640px){.mobile-lang-btn{display:inline-flex!important}.lang-switch{display:none}}
 
-body.dark-mode .mdui-list-item-content,
-body.dark-mode .mdui-list-item-title,
-body.dark-mode .mdui-list-item-text {
-  color: #e0e0e0 !important;
-}
+.spinning .mdui-icon{animation:sp .5s ease}
+@keyframes sp{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
-body.dark-mode .page-footer {
-  color: rgba(255, 255, 255, 0.3);
-}
+.page-footer{text-align:center;padding:32px 16px 20px;font-size:12px;color:#999;line-height:1.8}
 
-body.dark-mode kbd {
-  background: #333;
-  border-color: #444;
-  color: #888;
-}
+.fade-in{animation:fi .3s ease both}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-body.dark-mode .uptime-day.empty {
-  background: #333;
-}
-
-body.dark-mode .chart-tooltip {
-  background: #2a2a2a;
-  border-color: #333;
-  color: #e0e0e0;
-}
-
-body.dark-mode .mdui-spinner-colorful {
-  border-color: #333;
-  border-top-color: #F48FB1;
-}
-
-body.dark-mode .mdui-color-amber-100 {
-  background: #3e2f10 !important;
-  color: #ffb74d !important;
-}
-
-body.dark-mode .mdui-text-color-amber-800,
-body.dark-mode .mdui-text-color-amber-900 {
-  color: #ffb74d !important;
-}
-
-/* ── 站点项间距 ── */
-.site-item {
-  transition: background 0.1s;
-}
-
-.site-item:hover {
-  background: rgba(0, 0, 0, 0.02);
-}
-
-body.dark-mode .site-item:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-/* ── 站点链接 ── */
-.site-link:hover {
-  color: #FF4081 !important;
-  text-decoration: underline !important;
-}
-
-/* ── 状态点 ── */
-.site-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-.site-dot.dot-up {
-  animation: pulse-g 2.5s infinite;
-}
-
-.site-dot.dot-down {
-  animation: pulse-r 1.5s infinite;
-}
-
-@keyframes pulse-g {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.3); }
-  70% { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0); }
-}
-
-@keyframes pulse-r {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.35); }
-  70% { box-shadow: 0 0 0 5px rgba(239, 68, 68, 0); }
-}
-
-/* ── 30 天色块 ── */
-.uptime-bar-wrap {
-  display: flex;
-  gap: 2px;
-  height: 20px;
-  margin: 4px 0;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.uptime-day {
-  flex: 1;
-  border-radius: 2px;
-  min-width: 0;
-  transition: opacity 0.1s;
-}
-
-.uptime-day:hover {
-  opacity: 0.7;
-}
-
-.uptime-day.empty {
-  background: #eee;
-  opacity: 0.4;
-}
-
-/* ── 图表容器 ── */
-.chart-container {
-  position: relative;
-}
-
-.response-chart {
-  width: 100%;
-  height: 100px;
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.02);
-  display: block;
-}
-
-body.dark-mode .response-chart {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.chart-tooltip {
-  position: absolute;
-  pointer-events: none;
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 5px 9px;
-  font-size: 11px;
-  line-height: 1.3;
-  color: #333;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  transition: opacity 0.1s, left 0.06s, top 0.06s;
-  transform: translate(-50%, 0);
-  white-space: nowrap;
-  z-index: 10;
-}
-
-/* ── 加载遮罩 ── */
-.loading-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.8);
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-}
-
-body.dark-mode .loading-overlay {
-  background: rgba(18, 18, 18, 0.8);
-}
-
-/* ── 语言切换 ── */
-.lang-switch {
-  display: flex;
-  gap: 1px;
-  margin: 0 4px;
-  background: #f0f0f0;
-  border-radius: 6px;
-  padding: 2px;
-}
-
-body.dark-mode .lang-switch {
-  background: #333;
-}
-
-.lang-btn {
-  padding: 2px 8px;
-  border: none;
-  border-radius: 4px;
-  background: transparent;
-  color: #999;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: inherit;
-}
-
-.lang-btn.active {
-  background: #fff;
-  color: #333;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-}
-
-body.dark-mode .lang-btn.active {
-  background: #444;
-  color: #fff;
-}
-
-.lang-btn:hover:not(.active) {
-  color: #666;
-}
-
-/* ── 移动端语言按钮 ── */
-.mobile-lang-btn {
-  display: none !important;
-}
-
-@media (max-width: 640px) {
-  .mobile-lang-btn {
-    display: inline-flex !important;
-  }
-  .lang-switch {
-    display: none;
-  }
-}
-
-/* ── 刷新旋转 ── */
-.spinning .mdui-icon {
-  animation: spin360 0.5s ease;
-}
-
-@keyframes spin360 {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ── 页脚 ── */
-.page-footer {
-  text-align: center;
-  padding: 32px 16px 20px;
-  font-size: 12px;
-  color: #999;
-  line-height: 1.8;
-}
-
-/* ── 淡入动画 ── */
-.fade-in {
-  animation: fadeIn 0.3s ease both;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ── 响应式 ── */
-@media (max-width: 640px) {
-  .response-chart { height: 72px; }
-  .uptime-bar-wrap { height: 16px; }
-  #countdown-text { display: none; }
-}
-
-/* ── 打印 ── */
-@media print {
-  .mdui-appbar, .loading-overlay, #search-bar, #group-toolbar,
-  .mobile-lang-btn, #countdown-text { display: none !important; }
-  body { background: #fff; color: #000; }
-  .site-dot { animation: none; }
-}
+@media(max-width:640px){.response-chart{height:72px}.uptime-bar-wrap{height:16px}#countdown-text{display:none}}
+@media print{.mdui-appbar,.loading-overlay,#search-bar,#group-toolbar,.mobile-lang-btn,#countdown-text{display:none!important}body{background:#fff;color:#000}.site-dot{animation:none}}
