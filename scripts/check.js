@@ -277,29 +277,41 @@ function loadJSON(filePath) {
 
 /**
  * Git 提交并推送数据
+ * 在 GitHub Actions 环境中，checkout@v4 已配置好 token 认证
+ * 本地运行时需要用户自行配置 git 凭据
  */
 function gitCommit() {
+  const cwd = path.join(__dirname, "..");
   try {
-    execSync('git config user.name "Status Monitor Bot"', { cwd: path.join(__dirname, "..") });
-    execSync('git config user.email "bot@status-monitor.local"', {
-      cwd: path.join(__dirname, ".."),
-    });
-    execSync("git add data/status.json data/history.json data/manifest.json data/history-*.json", {
-      cwd: path.join(__dirname, ".."),
-    });
+    // 用户信息（Actions 中由 workflow 预先配置，本地兜底）
+    try {
+      execSync('git config user.name', { cwd, encoding: "utf8" });
+    } catch (_) {
+      execSync('git config user.name "Status Monitor Bot"', { cwd });
+      execSync('git config user.email "bot@status-monitor.local"', { cwd });
+    }
+
+    execSync(
+      "git add data/status.json data/history.json data/manifest.json data/history-*.json",
+      { cwd }
+    );
 
     // 检查是否有变更
-    const status = execSync("git status --porcelain", {
-      cwd: path.join(__dirname, ".."),
-      encoding: "utf8",
-    });
+    const status = execSync("git status --porcelain", { cwd, encoding: "utf8" });
 
     if (status.trim()) {
       const now = new Date().toISOString().replace("T", " ").substring(0, 19);
-      execSync(`git commit -m "📊 状态更新 ${now}"`, {
-        cwd: path.join(__dirname, ".."),
-      });
-      execSync("git push", { cwd: path.join(__dirname, "..") });
+      execSync(`git commit -m "📊 状态更新 ${now}"`, { cwd });
+
+      // 推送：优先使用 GITHUB_TOKEN 拼入 remote URL（Actions 环境）
+      if (GITHUB_TOKEN && REPO_OWNER && REPO_NAME) {
+        execSync(
+          `git push https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO_OWNER}/${REPO_NAME}.git HEAD:main`,
+          { cwd }
+        );
+      } else {
+        execSync("git push", { cwd });
+      }
       console.log("✅ 数据已提交并推送");
     } else {
       console.log("ℹ️ 无数据变更，跳过提交");
