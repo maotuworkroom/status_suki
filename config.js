@@ -58,6 +58,13 @@ const CONFIG = {
           expectedStatus: 200,
           keyword: "",
         },
+        {
+          name: "CommentSys",
+          url: "https://giscus.app/zh-CN",
+          method: "GET",
+          expectedStatus: 200,
+          keyword: "",
+        },
       ],
     },
   ],
