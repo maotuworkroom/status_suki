@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Real-time website monitoring status page powered by GitHub Actions">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Status Page</title>
+
+  <!-- MDUI 组件库 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.2/css/mdui.min.css">
+  <!-- Material Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <!-- 自定义样式 -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2322c55e'/><path d='M30 52 L44 66 L70 38' stroke='white' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+</head>
+
+<body class="mdui-theme-primary-indigo mdui-theme-accent-pink">
+
+  <!-- 加载遮罩 -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <span id="loading-text">加载中...</span>
+  </div>
+
+  <!-- 顶部导航栏 -->
+  <header class="app-bar">
+    <div class="app-bar-title">
+      <span id="page-title">Status Page</span>
+    </div>
+
+    <div class="app-bar-actions">
+      <span id="last-refresh-text"></span>
+      <span id="countdown-text">60s</span>
+
+      <!-- 语言切换（桌面端） -->
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="zh" onclick="switchLang('zh')">中</button>
+        <button class="lang-btn" data-lang="en" onclick="switchLang('en')">EN</button>
+        <button class="lang-btn" data-lang="ja" onclick="switchLang('ja')">日</button>
+      </div>
+
+      <!-- 语言切换（移动端） -->
+      <button class="app-bar-btn mobile-lang-btn" onclick="toggleMobileLang()" title="Language">
+        <i class="mdui-icon material-icons">translate</i>
+      </button>
+
+      <!-- 深色模式 -->
+      <button class="app-bar-btn" onclick="toggleTheme()" title="Toggle theme (D)">
+        <i class="mdui-icon material-icons" id="theme-icon">dark_mode</i>
+      </button>
+
+      <!-- 刷新 -->
+      <button class="app-bar-btn refresh-btn" onclick="refreshData()" title="Refresh (R)">
+        <i class="mdui-icon material-icons">refresh</i>
+      </button>
+    </div>
+  </header>
+
+  <!-- 移动端语言菜单 -->
+  <div class="mobile-lang-menu" id="mobile-lang-menu">
+    <button class="mobile-lang-item active" data-lang="zh" onclick="switchLang('zh');closeMobileLang()">中文</button>
+    <button class="mobile-lang-item" data-lang="en" onclick="switchLang('en');closeMobileLang()">English</button>
+    <button class="mobile-lang-item" data-lang="ja" onclick="switchLang('ja');closeMobileLang()">日本語</button>
+  </div>
+
+  <!-- 主内容区 -->
+  <main class="main-container">
+
+    <!-- 公告横幅 -->
+    <div id="incident-banner" class="incident-banner"></div>
+
+    <!-- 总状态 -->
+    <div id="overall-status" class="overall-status operational"></div>
+
+    <!-- 分组列表 -->
+    <div id="groups"></div>
+
+    <!-- 事件历史 -->
+    <div id="incident-history"></div>
+
+    <!-- 服务状态列表 -->
+    <div class="services-section">
+      <div class="services-title">
+        <i class="mdui-icon material-icons">list_alt</i>
+        <span id="services-heading">服务状态</span>
+      </div>
+      <div id="services-list"></div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="page-footer">
+      <div id="footer-text">Powered by GitHub Actions · © 2024</div>
+      <div style="margin-top:4px">
+        <span class="kbd">R</span> <span id="footer-refresh-hint">刷新</span>
+        &nbsp;·&nbsp;
+        <span class="kbd">D</span> <span id="footer-theme-hint">主题</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- 脚本 -->
+  <script src="https://cdn.jsdelivr.net/npm/mdui@1.0.2/js/mdui.min.js"></script>
+  <script src="i18n.js"></script>
+  <script src="render.js"></script>
+
+  <!-- 移动端语言菜单控制 -->
+  <script>
+    function toggleMobileLang() {
+      var menu = document.getElementById('mobile-lang-menu');
+      menu.classList.toggle('show');
+    }
+    function closeMobileLang() {
+      document.getElementById('mobile-lang-menu').classList.remove('show');
+    }
+    document.addEventListener('click', function(e) {
+      var menu = document.getElementById('mobile-lang-menu');
+      if (!e.target.closest('.mobile-lang-btn') && !e.target.closest('.mobile-lang-menu')) {
+        menu.classList.remove('show');
+      }
+    });
+  </script>
+
+</body>
+</html>

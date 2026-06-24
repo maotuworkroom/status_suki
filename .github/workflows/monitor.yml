@@ -1,0 +1,71 @@
+/**
+ * ============================================
+ *  GitHub Actions 监控工作流
+ *  定时运行 Node.js 探测脚本，检测所有站点状态
+ *  更新 data/ 目录下的 JSON 数据文件并自动提交
+ *  站点离线时自动创建 Issue，恢复时自动关闭
+ * ============================================
+ */
+
+name: Site Monitor
+
+on:
+  # ── 定时触发 ──
+  # 默认每 5 分钟检测一次
+  # 修改 cron 表达式即可调整频率（最小间隔 5 分钟）
+  # 常用示例：
+  #   */5 * * * *   每 5 分钟
+  #   */10 * * * *  每 10 分钟
+  #   */15 * * * *  每 15 分钟
+  #   0 * * * *     每小时
+  schedule:
+    - cron: '*/5 * * * *'
+
+  # ── 手动触发 ──
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: '手动触发原因'
+        required: false
+        default: 'Manual trigger'
+
+# 防止并发运行
+concurrency:
+  group: monitor-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run monitor script
+        run: node scripts/check.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/status.json data/history.json
+          if git diff --cached --quiet; then
+            echo "✓ No changes to commit"
+          else
+            git commit -m "chore: update monitoring data [skip ci]"
+            git push
+            echo "✓ Data committed and pushed"
+          fi
