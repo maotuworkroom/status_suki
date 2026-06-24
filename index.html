@@ -2,18 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
   <title>Sukiing 服务状态</title>
-  <meta name="description" content="Sukiing圣地巡礼站 - 服务状态监控。实时查看所有服务的运行状态、响应时间和历史可用率。">
+  <meta name="description" content="Sukiing圣地巡礼站服务状态 — 享你所爱之途">
   <meta name="theme-color" content="#F8BBD0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Sukiing Status">
+  <meta name="apple-mobile-web-app-title" content="Sukiing">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Sukiing 服务状态">
-  <meta property="og:description" content="Sukiing圣地巡礼站 - 实时服务状态监控">
+  <meta property="og:description" content="Sukiing圣地巡礼站服务状态监控">
   <meta property="og:image" content="icon.png">
-  <meta name="twitter:card" content="summary">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.png" type="image/png">
   <link rel="apple-touch-icon" href="icon.png">
@@ -21,105 +20,102 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="style.css">
 </head>
+<body>
 
-<body class="mdui-drawer-body-left">
+<!-- 顶栏 -->
+<header class="mdui-appbar mdui-appbar-fixed mdui-color-white mdui-shadow-1">
+  <div class="mdui-toolbar mdui-color-white" style="padding:0 12px">
+    <img src="icon.png" style="height:26px;border-radius:6px;margin-right:8px" onerror="this.remove()">
+    <a class="mdui-typo-headline" style="font-weight:700;font-size:16px;text-decoration:none;color:#333" href=".">Sukiing</a>
+    <span style="font-size:11px;color:#999;margin-left:6px">服务状态</span>
+    <div class="mdui-toolbar-spacer"></div>
+    <span id="last-refresh-text" style="font-size:11px;color:#bbb;margin-right:2px"></span>
+    <span id="countdown-text" style="font-size:10px;color:#ccc;margin-right:4px"></span>
+    <button class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-ripple" onclick="toggleSearch()" mdui-tooltip="{content:'搜索'}"><i class="mdui-icon material-icons">search</i></button>
+    <button class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-ripple mobile-lang-btn" onclick="toggleMobileLang()" mdui-tooltip="{content:'语言'}"><i class="mdui-icon material-icons">translate</i></button>
+    <div class="lang-switch">
+      <button class="lang-btn active" data-lang="zh" onclick="switchLang('zh')">中</button>
+      <button class="lang-btn" data-lang="en" onclick="switchLang('en')">EN</button>
+      <button class="lang-btn" data-lang="ja" onclick="switchLang('ja')">日</button>
+    </div>
+    <button class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-ripple" onclick="toggleTheme()" mdui-tooltip="{content:'主题'}"><i class="mdui-icon material-icons" id="theme-icon">dark_mode</i></button>
+    <button class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-ripple refresh-btn" onclick="refreshData()" mdui-tooltip="{content:'刷新'}"><i class="mdui-icon material-icons">refresh</i></button>
+  </div>
+</header>
 
-  <!-- ═══ 顶栏 ═══ -->
-  <div class="mdui-appbar mdui-appbar-fixed mdui-color-white mdui-shadow-1">
-    <div class="mdui-toolbar mdui-color-white" style="padding:0 16px">
-      <img src="icon.png" alt="" style="height:28px;border-radius:6px;margin-right:8px" onerror="this.style.display='none'">
-      <a class="mdui-typo-headline" style="font-weight:700;font-size:17px;text-decoration:none;color:inherit" href=".">Sukiing</a>
-      <a class="mdui-typo-caption" style="margin-left:6px;font-size:12px;opacity:0.5;text-decoration:none;color:inherit" href=".">服务状态</a>
-      <div class="mdui-toolbar-spacer"></div>
-      <span id="last-refresh-text" style="font-size:11px;opacity:0.45;margin-right:4px"></span>
-      <span id="countdown-text" style="font-size:10px;opacity:0.3;margin-right:4px"></span>
-      <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-btn-dense" onclick="toggleSearch()" mdui-tooltip="{content:'搜索'}"><i class="mdui-icon material-icons">search</i></button>
-      <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-btn-dense mobile-lang-btn" onclick="toggleMobileLang()" mdui-tooltip="{content:'语言'}"><i class="mdui-icon material-icons">translate</i></button>
-      <div class="lang-switch">
-        <button class="lang-btn active" data-lang="zh" onclick="switchLang('zh')">中</button>
-        <button class="lang-btn" data-lang="en" onclick="switchLang('en')">EN</button>
-        <button class="lang-btn" data-lang="ja" onclick="switchLang('ja')">日</button>
+<!-- 加载 -->
+<div id="loading-overlay" class="loading-overlay">
+  <div class="mdui-spinner mdui-spinner-colorful" style="width:28px;height:28px"></div>
+</div>
+
+<!-- 正文 -->
+<main class="mdui-container" style="padding-top:76px;padding-bottom:40px;max-width:800px">
+
+  <div id="incident-banner"></div>
+  <div id="overall-status"></div>
+
+  <!-- 搜索 -->
+  <div id="search-bar" class="mdui-card mdui-shadow-1" style="display:none;padding:6px 12px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:6px">
+      <i class="mdui-icon material-icons" style="font-size:20px;opacity:0.25">search</i>
+      <input id="search-input" type="text" style="flex:1;border:none;outline:none;font-size:14px;background:transparent" placeholder="搜索站点..." oninput="filterSites(this.value)">
+      <button class="mdui-btn mdui-btn-icon mdui-btn-dense" onclick="clearSearch()"><i class="mdui-icon material-icons" style="font-size:18px">close</i></button>
+    </div>
+  </div>
+
+  <!-- 工具栏 -->
+  <div id="group-toolbar" style="display:none;text-align:right;margin-bottom:6px">
+    <button class="mdui-btn mdui-btn-dense mdui-ripple" onclick="expandAllGroups()" style="font-size:12px;min-width:0"><i class="mdui-icon material-icons" style="font-size:15px;margin-right:1px">unfold_more</i><span id="expand-all-text">展开全部</span></button>
+    <button class="mdui-btn mdui-btn-dense mdui-ripple" onclick="collapseAllGroups()" style="font-size:12px;min-width:0"><i class="mdui-icon material-icons" style="font-size:15px;margin-right:1px">unfold_less</i><span id="collapse-all-text">收起全部</span></button>
+  </div>
+
+  <div id="groups"></div>
+  <div id="incident-history"></div>
+
+  <!-- 服务列表 -->
+  <div class="mdui-card mdui-shadow-1" style="margin-top:12px">
+    <div class="mdui-card-primary" style="padding:12px 16px 6px">
+      <div class="mdui-card-primary-title" style="font-size:14px">
+        <i class="mdui-icon material-icons" style="font-size:18px;vertical-align:middle;margin-right:4px">list_alt</i>
+        <span id="services-heading">服务状态</span>
       </div>
-      <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-btn-dense" onclick="toggleTheme()" mdui-tooltip="{content:'主题'}"><i class="mdui-icon material-icons" id="theme-icon">dark_mode</i></button>
-      <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-btn-dense refresh-btn" onclick="refreshData()" mdui-tooltip="{content:'刷新'}"><i class="mdui-icon material-icons">refresh</i></button>
     </div>
+    <div id="services-list"></div>
   </div>
 
-  <!-- ═══ 加载遮罩 ═══ -->
-  <div id="loading-overlay" class="loading-overlay">
-    <div class="mdui-spinner mdui-spinner-colorful" style="width:32px;height:32px"></div>
-  </div>
+  <!-- 页脚 -->
+  <footer class="page-footer">
+    <div style="margin-bottom:2px"><img src="icon.png" style="width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-right:4px" onerror="this.remove()"><b>Sukiing</b> · <span id="footer-text">享你所爱之途</span></div>
+    <div style="font-size:11px;opacity:0.4"><span id="footer-powered">Powered by GitHub Actions</span></div>
+  </footer>
 
-  <!-- ═══ 主内容 ═══ -->
-  <div class="mdui-container" style="padding-top:80px;padding-bottom:48px;max-width:820px">
+</main>
 
-    <!-- 公告横幅 -->
-    <div id="incident-banner"></div>
+<!-- 移动端语言菜单 -->
+<ul id="mobile-lang-menu" class="mdui-menu" mdui-menu>
+  <li class="mdui-menu-item mdui-ripple active" data-lang="zh"><a>中文</a></li>
+  <li class="mdui-menu-item mdui-ripple" data-lang="en"><a>English</a></li>
+  <li class="mdui-menu-item mdui-ripple" data-lang="ja"><a>日本語</a></li>
+</ul>
 
-    <!-- 总状态 -->
-    <div id="overall-status"></div>
-
-    <!-- 搜索栏 -->
-    <div id="search-bar" class="mdui-card mdui-shadow-1 mdui-m-b-2" style="display:none;padding:8px 12px">
-      <div class="mdui-textfield mdui-textfield-has-bottom" style="padding:4px 0">
-        <i class="mdui-icon material-icons" style="margin-right:8px;opacity:0.3">search</i>
-        <input class="mdui-textfield-input" type="text" id="search-input" placeholder="搜索站点..." oninput="filterSites(this.value)">
-        <button class="mdui-btn mdui-btn-icon mdui-btn-dense" onclick="clearSearch()"><i class="mdui-icon material-icons" style="font-size:18px">close</i></button>
-      </div>
-    </div>
-
-    <!-- 分组工具栏 -->
-    <div id="group-toolbar" style="display:none;text-align:right;margin-bottom:8px">
-      <button class="mdui-btn mdui-btn-dense mdui-ripple" onclick="expandAllGroups()" style="font-size:12px;min-width:0"><i class="mdui-icon material-icons" style="font-size:16px;margin-right:2px">unfold_more</i><span id="expand-all-text">展开全部</span></button>
-      <button class="mdui-btn mdui-btn-dense mdui-ripple" onclick="collapseAllGroups()" style="font-size:12px;min-width:0"><i class="mdui-icon material-icons" style="font-size:16px;margin-right:2px">unfold_less</i><span id="collapse-all-text">收起全部</span></button>
-    </div>
-
-    <!-- 分组列表 -->
-    <div id="groups"></div>
-
-    <!-- 事件历史 -->
-    <div id="incident-history"></div>
-
-    <!-- 服务状态列表 -->
-    <div class="mdui-card mdui-shadow-1 mdui-m-t-2">
-      <div class="mdui-card-primary" style="padding:14px 16px 8px">
-        <div class="mdui-card-primary-title" style="font-size:15px"><i class="mdui-icon material-icons" style="font-size:20px;vertical-align:middle;margin-right:6px">list_alt</i><span id="services-heading">服务状态</span></div>
-      </div>
-      <div id="services-list"></div>
-    </div>
-
-    <!-- 页脚 -->
-    <div class="page-footer">
-      <div><img src="icon.png" alt="" style="width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-right:4px" onerror="this.style.display='none'"><strong>Sukiing</strong> · <span id="footer-text">享你所爱之途</span></div>
-      <div style="margin-top:2px;font-size:11px;opacity:0.5"><span id="footer-powered">Powered by GitHub Actions</span> · <kbd style="padding:0 4px;font-size:10px;background:#f0f0f0;border-radius:3px;border:1px solid #ddd">R</kbd> <span id="footer-refresh-hint">刷新</span> · <kbd style="padding:0 4px;font-size:10px;background:#f0f0f0;border-radius:3px;border:1px solid #ddd">D</kbd> <span id="footer-theme-hint">主题</span></div>
-    </div>
-
-  </div>
-
-  <!-- ═══ 移动端语言菜单 ═══ -->
-  <div class="mdui-menu" id="mobile-lang-menu" mdui-menu>
-    <li class="mdui-menu-item mdui-ripple active" data-lang="zh"><a>中文</a></li>
-    <li class="mdui-menu-item mdui-ripple" data-lang="en"><a>English</a></li>
-    <li class="mdui-menu-item mdui-ripple" data-lang="ja"><a>日本語</a></li>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/mdui@1.0.2/js/mdui.min.js"></script>
-  <script src="i18n.js"></script>
-  <script src="render.js"></script>
-  <script>
-    var mobileLangInst = null;
-    function toggleMobileLang() {
-      var el = document.getElementById('mobile-lang-menu');
-      if (!mobileLangInst) mobileLangInst = new mdui.Menu('.mobile-lang-btn', el, { covered: false });
-      mobileLangInst.open();
-    }
-    document.getElementById('mobile-lang-menu').addEventListener('click', function(e) {
-      var item = e.target.closest('.mdui-menu-item');
-      if (!item) return;
-      var lang = item.dataset.lang;
-      if (lang) { switchLang(lang); mobileLangInst.close(); }
-    });
-  </script>
-
+<script src="https://cdn.jsdelivr.net/npm/mdui@1.0.2/js/mdui.min.js"></script>
+<script src="i18n.js"></script>
+<script src="render.js"></script>
+<script>
+(function(){
+  var _menu=null;
+  window.toggleMobileLang=function(){
+    var el=document.getElementById('mobile-lang-menu');
+    if(!_menu) _menu=new mdui.Menu('.mobile-lang-btn',el,{covered:false});
+    _menu.open();
+  };
+  document.getElementById('mobile-lang-menu').addEventListener('click',function(e){
+    var li=e.target.closest('.mdui-menu-item');
+    if(!li)return;
+    var lang=li.dataset.lang;
+    if(lang){switchLang(lang);_menu.close();}
+  });
+})();
+</script>
 </body>
 </html>
