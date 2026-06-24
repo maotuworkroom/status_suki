@@ -103,14 +103,14 @@
 
   function isDark() { return document.body.classList.contains("dark-mode"); }
 
-  function statusBadge(type) {
+  function statusIcon(type) {
     var map = {
-      operational: { icon: "check_circle", color: "green", text: t("status.operational") },
-      partial: { icon: "warning", color: "amber", text: t("status.partial") },
-      major: { icon: "error", color: "red", text: t("status.major") }
+      operational: { icon: "check_circle", color: "#22C55E" },
+      partial: { icon: "warning", color: "#F59E0B" },
+      major: { icon: "error", color: "#EF4444" }
     };
     var s = map[type] || map.operational;
-    return '<i class="mdui-icon material-icons mdui-text-color-' + s.color + '-400" style="font-size:48px">' + s.icon + '</i>';
+    return '<i class="mdui-icon material-icons" style="font-size:52px;color:' + s.color + '">' + s.icon + '</i>';
   }
 
   // ── 渲染：总状态 ──
@@ -121,31 +121,27 @@
 
     if (!statusData || !statusData.groups || !statusData.groups.length) {
       el.innerHTML =
-        '<div class="mdui-card mdui-shadow-1" style="text-align:center;padding:36px 20px 28px">' +
-          statusBadge("operational") +
-          '<div style="font-size:20px;font-weight:700;margin:12px 0 6px">' + t("ui.noData") + '</div>' +
-          '<div style="font-size:12px;opacity:0.5">' + t("ui.waitingFirstCheck") + '</div>' +
+        '<div class="overall-card status-operational fade-in">' +
+          statusIcon("operational") +
+          '<div class="overall-title">' + t("ui.noData") + '</div>' +
+          '<div style="font-size:12px;opacity:0.35">' + t("ui.waitingFirstCheck") + '</div>' +
         '</div>';
       return;
     }
 
     var o = statusData.overallStatus || "operational";
     var textMap = { operational: t("status.operational"), partial: t("status.partial"), major: t("status.major") };
-    var colorMap = { operational: "green", partial: "amber", major: "red" };
-    var c = colorMap[o];
 
     el.innerHTML =
-      '<div class="mdui-card mdui-shadow-1 fade-in" style="text-align:center;padding:36px 20px 28px;border-top:3px solid">' +
-        '<div style="border-top-color:var(--' + c + '-color, #' + { green: "22c55e", amber: "f59e0b", red: "ef4444" }[c] + ');margin-top:-3px">' +
-        statusBadge(o) +
-        '<div style="font-size:22px;font-weight:700;margin:12px 0 10px">' + textMap[o] + '</div>' +
-        '<div style="display:flex;justify-content:center;gap:6px;margin-bottom:8px;flex-wrap:wrap">' +
-          '<span class="mdui-chip"><span class="mdui-chip-title mdui-text-color-green-400">' + (statusData.upSites || 0) + ' ' + t("ui.online") + '</span></span>' +
-          '<span class="mdui-chip"><span class="mdui-chip-title mdui-text-color-red-400">' + ((statusData.totalSites || 0) - (statusData.upSites || 0)) + ' ' + t("ui.offline") + '</span></span>' +
-          '<span class="mdui-chip"><span class="mdui-chip-title">' + (statusData.totalSites || 0) + ' ' + t("ui.total") + '</span></span>' +
+      '<div class="overall-card status-' + o + ' fade-in">' +
+        statusIcon(o) +
+        '<div class="overall-title">' + textMap[o] + '</div>' +
+        '<div class="overall-stats">' +
+          '<span class="stat-chip green">' + (statusData.upSites || 0) + ' ' + t("ui.online") + '</span>' +
+          '<span class="stat-chip red">' + ((statusData.totalSites || 0) - (statusData.upSites || 0)) + ' ' + t("ui.offline") + '</span>' +
+          '<span class="stat-chip">' + (statusData.totalSites || 0) + ' ' + t("ui.total") + '</span>' +
         '</div>' +
-        '<div style="font-size:12px;opacity:0.4">' + t("ui.lastUpdate") + '：' + timeAgo(statusData.lastUpdate) + '</div>' +
-        '</div>' +
+        '<div class="overall-time">' + t("ui.lastUpdate") + '：' + timeAgo(statusData.lastUpdate) + '</div>' +
       '</div>';
   }
 
@@ -156,7 +152,13 @@
     if (!el) return;
 
     if (!statusData || !statusData.groups || !statusData.groups.length) {
-      el.innerHTML = '<div class="mdui-card mdui-shadow-1" style="text-align:center;padding:48px 20px"><i class="mdui-icon material-icons" style="font-size:40px;opacity:0.15">hourglass_empty</i><p style="font-size:13px;opacity:0.4;margin-top:8px">' + t("ui.noData") + '</p></div>';
+      el.innerHTML =
+        '<div class="group-card fade-in">' +
+          '<div class="empty-state">' +
+            '<i class="mdui-icon material-icons">hourglass_empty</i>' +
+            '<p>' + t("ui.noData") + '</p>' +
+          '</div>' +
+        '</div>';
       return;
     }
 
@@ -164,30 +166,28 @@
     statusData.groups.forEach(function(group, idx) {
       var on = group.sites.filter(function(s) { return s.status === "up"; }).length;
       var tot = group.sites.length;
-      var countClass = on < tot ? "mdui-text-color-red-400" : "mdui-text-color-green-400";
+      var countClass = on < tot ? "has-down" : "all-up";
 
-      html += '<div class="mdui-card mdui-shadow-1 mdui-m-b-2 fade-in" style="animation-delay:' + (idx * 0.06) + 's">';
-      html += '<div class="mdui-collapse-item mdui-collapse-item-open">';
-      html += '<div class="mdui-collapse-item-header" style="padding:12px 16px">';
-      html += '<i class="mdui-icon material-icons" style="font-size:20px;margin-right:8px;opacity:0.4">' + esc(group.icon || "dns") + '</i>';
-      html += '<span style="font-size:14px;font-weight:600;flex:1">' + esc(group.name) + '</span>';
-      html += '<span class="' + countClass + '" style="font-size:12px;font-weight:600;margin-right:8px">' + on + "/" + tot + " " + t("ui.online") + '</span>';
+      html += '<div class="group-card fade-in" style="animation-delay:' + (idx * 0.06) + 's">';
+      html += '<div class="group-header" onclick="toggleGroup(this)">';
+      html += '<div class="group-icon"><i class="mdui-icon material-icons">' + esc(group.icon || "dns") + '</i></div>';
+      html += '<span class="group-name">' + esc(group.name) + '</span>';
+      html += '<span class="group-count ' + countClass + '">' + on + "/" + tot + " " + t("ui.online") + '</span>';
+      html += '<i class="mdui-icon material-icons group-chevron">expand_more</i>';
       html += '</div>';
-      html += '<div class="mdui-collapse-item-body">';
-      html += '<div class="mdui-divider"></div>';
+      html += '<div class="group-body">';
       html += renderSites(group);
-      html += '</div>';
       html += '</div>';
       html += '</div>';
     });
 
     el.innerHTML = html;
 
-    // 初始化折叠
-    var collapse = el.querySelector('.mdui-collapse-item');
-    if (collapse) new mdui.Collapse(el);
-
     requestAnimationFrame(function() {
+      // Set max-height for collapse animation
+      el.querySelectorAll('.group-body').forEach(function(body) {
+        body.style.maxHeight = body.scrollHeight + 'px';
+      });
       statusData.groups.forEach(function(group) {
         group.sites.forEach(function(site) { drawResponseChart(group.name, site.name); });
       });
@@ -213,36 +213,34 @@
 
       var sslHTML = "";
       if (site.sslDaysLeft >= 0) {
-        var cls = site.sslDaysLeft <= 30 ? "mdui-color-orange-400" : "mdui-color-green-400";
-        sslHTML = '<span class="mdui-chip" style="height:20px;margin-left:4px"><span class="mdui-chip-title ' + cls + '" style="font-size:10px"><i class="mdui-icon material-icons" style="font-size:11px">lock</i> ' + site.sslDaysLeft + 'd</span></span>';
+        var sslCls = site.sslDaysLeft <= 30 ? "warn" : "ok";
+        sslHTML = '<span class="ssl-chip ' + sslCls + '"><i class="mdui-icon material-icons">lock</i>' + site.sslDaysLeft + 'd</span>';
       }
 
       var canvasId = ("chart-" + group.name + "-" + site.name).replace(/[^a-zA-Z0-9-]/g, "_");
       var rtStats = calcResponseStats(hist);
       var visible = !_searchQuery || site.name.toLowerCase().indexOf(_searchQuery.toLowerCase()) !== -1;
 
-      var rtColor = isUp ? "" : "mdui-text-color-red-400";
-      var dotColor = isUp ? "mdui-color-green-400" : "mdui-color-red-400";
       var uptimeColorStr = uptimeColor(uptime30d);
 
-      html += '<div class="site-item mdui-p-x-3" data-site-name="' + esc(site.name.toLowerCase()) + '" style="' + (visible ? '' : 'display:none') + 'padding:10px 16px;border-top:1px solid rgba(0,0,0,0.06)">';
+      html += '<div class="site-item" data-site-name="' + esc(site.name.toLowerCase()) + '" style="' + (visible ? '' : 'display:none') + '">';
 
       // 站点行
-      html += '<div style="display:flex;align-items:center;justify-content:space-between">';
-      html += '<div style="display:flex;align-items:center;gap:8px;min-width:0">';
-      html += '<span class="site-dot ' + (isUp ? "dot-up" : "dot-down") + '" style="background:currentColor;color:' + (isUp ? "#22c55e" : "#ef4444") + '"></span>';
-      html += '<a class="mdui-text-color-black-text site-link" href="' + esc(site.url) + '" target="_blank" rel="noopener" style="font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(site.name) + '</a>';
+      html += '<div class="site-row">';
+      html += '<div class="site-left">';
+      html += '<span class="site-dot ' + (isUp ? "up" : "down") + '"></span>';
+      html += '<a class="site-name" href="' + esc(site.url) + '" target="_blank" rel="noopener">' + esc(site.name) + '</a>';
       html += sslHTML;
       html += '</div>';
-      html += '<div style="display:flex;align-items:center;gap:12px;flex-shrink:0">';
-      html += '<span style="font-size:13px;font-weight:700;color:' + uptimeColorStr + ';font-variant-numeric:tabular-nums">' + uptime30d.toFixed(2) + '%</span>';
-      html += '<span class="' + rtColor + '" style="font-size:11px;opacity:0.5;min-width:48px;text-align:right;font-variant-numeric:tabular-nums">' + (isUp ? site.responseTime + "ms" : t("ui.offline")) + '</span>';
+      html += '<div class="site-right">';
+      html += '<span class="site-uptime" style="color:' + uptimeColorStr + '">' + uptime30d.toFixed(2) + '%</span>';
+      html += '<span class="site-rt' + (isUp ? '' : ' offline') + '">' + (isUp ? site.responseTime + "ms" : t("ui.offline")) + '</span>';
       html += '</div>';
       html += '</div>';
 
       // 响应时间统计
       if (rtStats) {
-        html += '<div style="display:flex;gap:14px;padding:2px 0 2px 16px;font-size:10px;opacity:0.35;font-variant-numeric:tabular-nums">';
+        html += '<div class="rt-stats">';
         html += '<span>' + t("ui.min") + ' ' + rtStats.min + 'ms</span>';
         html += '<span>' + t("ui.avg") + ' ' + rtStats.avg + 'ms</span>';
         html += '<span>' + t("ui.max") + ' ' + rtStats.max + 'ms</span>';
@@ -317,9 +315,9 @@
     var dk = isDark();
     var gc = dk ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)";
     var tc = dk ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)";
-    var lc = dk ? "#666" : "#bbb";
-    var ft = dk ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)";
-    var fb = dk ? "rgba(255,255,255,0)" : "rgba(0,0,0,0)";
+    var lc = dk ? "#F48FB1" : "#EC407A";
+    var ft = dk ? "rgba(244,143,177,0.08)" : "rgba(236,64,126,0.06)";
+    var fb = dk ? "rgba(244,143,177,0)" : "rgba(236,64,126,0)";
 
     ctx.clearRect(0, 0, W, H);
 
@@ -422,19 +420,18 @@
     all.sort(function(a, b) { return new Date(b.start) - new Date(a.start); });
     var recent = all.slice(0, 10);
 
-    var html = '<div class="mdui-card mdui-shadow-1 mdui-m-t-2">';
-    html += '<div class="mdui-card-primary" style="padding:14px 16px 8px"><div class="mdui-card-primary-title" style="font-size:15px"><i class="mdui-icon material-icons" style="font-size:20px;vertical-align:middle;margin-right:6px">history</i>' + t("incidents.title") + '</div></div>';
-    html += '<div class="mdui-list">';
+    var html = '<div class="incident-card fade-in">';
+    html += '<div class="incident-card-title"><i class="mdui-icon material-icons">history</i>' + t("incidents.title") + '</div>';
     recent.forEach(function(inc) {
-      html += '<li class="mdui-list-item mdui-ripple" style="min-height:56px">';
-      html += '<i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-amber-400" style="font-size:16px">fiber_manual_record</i>';
-      html += '<div class="mdui-list-item-content">';
-      html += '<div class="mdui-list-item-title" style="font-size:13px">' + esc(inc.siteName) + ' <span style="opacity:0.35;font-size:11px">' + esc(inc.groupName) + '</span></div>';
-      html += '<div class="mdui-list-item-text" style="font-size:12px">' + (esc(inc.reason) || t("ui.unknown")) + '</div>';
-      html += '<div class="mdui-list-item-text" style="font-size:11px;opacity:0.4">' + new Date(inc.start).toLocaleString() + ' · ' + formatDuration(inc.duration) + '</div>';
-      html += '</div></li>';
+      html += '<div class="incident-item">';
+      html += '<div class="incident-dot"></div>';
+      html += '<div class="incident-info">';
+      html += '<div class="incident-site">' + esc(inc.siteName) + '<span>' + esc(inc.groupName) + '</span></div>';
+      html += '<div class="incident-reason">' + (esc(inc.reason) || t("ui.unknown")) + '</div>';
+      html += '<div class="incident-time">' + new Date(inc.start).toLocaleString() + ' · ' + formatDuration(inc.duration) + '</div>';
+      html += '</div></div>';
     });
-    html += '</div></div>';
+    html += '</div>';
 
     el.style.display = "block";
     el.innerHTML = html;
@@ -446,20 +443,19 @@
     var el = document.getElementById("services-list");
     if (!el || !statusData || !statusData.groups) return;
 
-    var html = '<div class="mdui-list">';
+    var html = '<div class="services-title" id="services-heading">' + t("services.title") + '</div>';
     statusData.groups.forEach(function(group) {
-      html += '<li class="mdui-list-item" style="min-height:auto;padding:8px 16px 4px"><div class="mdui-list-item-content"><span style="font-size:11px;font-weight:700;opacity:0.35;text-transform:uppercase;letter-spacing:0.5px">' + esc(group.name) + '</span></div></li>';
+      html += '<div class="service-group-label">' + esc(group.name) + '</div>';
       group.sites.forEach(function(site) {
         var isUp = site.status === "up";
         var label = isUp ? t("services.operational") : t("services.down");
-        var color = isUp ? "green" : "red";
-        html += '<li class="mdui-list-item" style="min-height:40px">';
-        html += '<div class="mdui-list-item-content"><span style="font-size:13px">' + esc(site.name) + '</span></div>';
-        html += '<span class="mdui-chip" style="height:22px"><span class="mdui-chip-title mdui-text-color-' + color + '-400" style="font-size:11px"><i class="mdui-icon material-icons" style="font-size:8px">fiber_manual_record</i> ' + label + '</span></span>';
-        html += '</li>';
+        var cls = isUp ? "up" : "down";
+        html += '<div class="service-item">';
+        html += '<span class="service-item-name">' + esc(site.name) + '</span>';
+        html += '<span class="service-status-chip ' + cls + '"><i class="mdui-icon material-icons">fiber_manual_record</i>' + label + '</span>';
+        html += '</div>';
       });
     });
-    html += '</div>';
     el.innerHTML = html;
   }
 
@@ -476,10 +472,8 @@
 
     if (!down.length) { el.style.display = "none"; return; }
 
-    el.style.display = "block";
-    el.innerHTML = '<div class="mdui-card mdui-color-amber-100 mdui-shadow-1 mdui-m-b-2 fade-in" style="padding:12px 16px;font-size:13px;display:flex;align-items:center;gap:8px">' +
-      '<i class="mdui-icon material-icons mdui-text-color-amber-800">warning</i>' +
-      '<span class="mdui-text-color-amber-900"><strong>' + t("banner.activeIncident") + '</strong> — ' + down.map(function(s) { return esc(s.name); }).join(", ") + '</span></div>';
+    el.style.display = "flex";
+    el.querySelector('span').innerHTML = '<strong>' + t("banner.activeIncident") + '</strong> — ' + down.map(function(s) { return esc(s.name); }).join(", ");
   }
 
   // ── 渲染全部 ──
@@ -543,9 +537,9 @@
   window.toggleSearch = function() {
     var bar = document.getElementById("search-bar");
     if (!bar) return;
-    var vis = bar.style.display !== "none";
-    bar.style.display = vis ? "none" : "block";
-    if (!vis) {
+    var show = !bar.classList.contains("show");
+    bar.classList.toggle("show", show);
+    if (show) {
       var input = document.getElementById("search-input");
       if (input) { input.value = ""; input.focus(); }
       _searchQuery = "";
@@ -567,15 +561,32 @@
     filterSites("");
   };
 
+  window.toggleGroup = function(header) {
+    var card = header.closest('.group-card');
+    if (!card) return;
+    var body = card.querySelector('.group-body');
+    if (!body) return;
+    var isCollapsed = card.classList.toggle('collapsed');
+    if (isCollapsed) {
+      body.style.maxHeight = '0';
+    } else {
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  };
+
   window.expandAllGroups = function() {
-    document.querySelectorAll('.mdui-collapse-item').forEach(function(item) {
-      item.classList.add('mdui-collapse-item-open');
+    document.querySelectorAll('.group-card').forEach(function(card) {
+      card.classList.remove('collapsed');
+      var body = card.querySelector('.group-body');
+      if (body) body.style.maxHeight = body.scrollHeight + 'px';
     });
   };
 
   window.collapseAllGroups = function() {
-    document.querySelectorAll('.mdui-collapse-item').forEach(function(item) {
-      item.classList.remove('mdui-collapse-item-open');
+    document.querySelectorAll('.group-card').forEach(function(card) {
+      card.classList.add('collapsed');
+      var body = card.querySelector('.group-body');
+      if (body) body.style.maxHeight = '0';
     });
   };
 
@@ -639,7 +650,7 @@
       if (e.key === "s" || e.key === "S") { e.preventDefault(); toggleSearch(); }
     });
 
-    document.getElementById("group-toolbar").style.display = "block";
+    document.getElementById("group-toolbar").classList.add("show");
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

@@ -1,120 +1,788 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>Sukiing 服务状态</title>
-<meta name="description" content="Sukiing圣地巡礼站服务状态监控">
-<meta name="theme-color" content="#F8BBD0">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Sukiing">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Sukiing 服务状态">
-<meta property="og:description" content="Sukiing圣地巡礼站 — 实时服务状态监控">
-<meta property="og:image" content="icon.png">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon.png" type="image/png">
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.2/css/mdui.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>服务状态 — Sukiing</title>
+  <meta name="description" content="Sukiing 服务状态监控 — 实时掌握各项服务运行状况">
+  <meta name="theme-color" content="#F8BBD0">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@2/mdui.min.css">
+  <style>
+    :root {
+      --pink-50: #FFF0F5;
+      --pink-100: #FCE4EC;
+      --pink-200: #F8BBD0;
+      --pink-400: #F48FB1;
+      --pink-500: #EC407A;
+      --pink-700: #C2185B;
+      --accent: #FF4081;
+      --surface: #FFFFFF;
+      --surface-dim: #FAFAFA;
+      --on-surface: #1C1B1F;
+      --on-surface-variant: #6B6B6B;
+      --outline: rgba(0,0,0,0.08);
+      --green: #22C55E;
+      --red: #EF4444;
+      --amber: #F59E0B;
+      --radius: 16px;
+      --radius-sm: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--pink-50);
+      background-image:
+        radial-gradient(ellipse at 15% 0%, rgba(248,187,208,0.25) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, rgba(255,64,129,0.08) 0%, transparent 45%);
+      color: var(--on-surface);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body.dark-mode {
+      background: #0F0F0F;
+      background-image:
+        radial-gradient(ellipse at 15% 0%, rgba(136,14,79,0.12) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, rgba(255,64,129,0.06) 0%, transparent 45%);
+      color: #E8E8E8;
+      --surface: #1A1A1A;
+      --surface-dim: #141414;
+      --on-surface: #E8E8E8;
+      --on-surface-variant: #A0A0A0;
+      --outline: rgba(255,255,255,0.06);
+    }
+
+    /* ── 顶部导航 ── */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px) saturate(1.8);
+      -webkit-backdrop-filter: blur(20px) saturate(1.8);
+      background: rgba(255,240,245,0.72);
+      border-bottom: 1px solid var(--outline);
+      transition: background 0.3s;
+    }
+    body.dark-mode .top-bar {
+      background: rgba(15,15,15,0.78);
+    }
+    .top-bar-inner {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .top-bar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: -0.3px;
+      color: var(--on-surface);
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .top-bar-brand img {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+    }
+    .top-bar-brand span {
+      background: linear-gradient(135deg, var(--accent), var(--pink-400));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .top-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: auto;
+    }
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--on-surface-variant);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+      font-size: 20px;
+      position: relative;
+    }
+    .icon-btn:hover { background: rgba(0,0,0,0.06); }
+    body.dark-mode .icon-btn:hover { background: rgba(255,255,255,0.08); }
+    .icon-btn .mdui-icon { font-size: 20px; }
+
+    /* ── 搜索栏 ── */
+    .search-bar {
+      display: none;
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 0 20px 12px;
+    }
+    .search-bar.show { display: block; }
+    .search-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-input-wrap .mdui-icon {
+      position: absolute;
+      left: 12px;
+      font-size: 18px;
+      color: var(--on-surface-variant);
+      opacity: 0.5;
+    }
+    .search-input {
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--outline);
+      border-radius: 10px;
+      padding: 0 40px 0 38px;
+      font-size: 13px;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--on-surface);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--pink-400);
+      box-shadow: 0 0 0 3px rgba(244,143,177,0.15);
+    }
+    .search-input::placeholder { color: var(--on-surface-variant); opacity: 0.4; }
+    .search-clear {
+      position: absolute;
+      right: 6px;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--on-surface-variant);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.4;
+      transition: opacity 0.15s;
+    }
+    .search-clear:hover { opacity: 0.8; }
+
+    /* ── 语言切换 ── */
+    .lang-switch {
+      display: flex;
+      gap: 1px;
+      background: rgba(0,0,0,0.04);
+      border-radius: 8px;
+      padding: 2px;
+    }
+    body.dark-mode .lang-switch { background: rgba(255,255,255,0.06); }
+    .lang-btn {
+      padding: 3px 10px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--on-surface-variant);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .lang-btn.active {
+      background: var(--surface);
+      color: var(--on-surface);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    body.dark-mode .lang-btn.active { background: #2A2A2A; }
+    .mobile-lang-btn { display: none !important; }
+    @media (max-width: 640px) {
+      .mobile-lang-btn { display: inline-flex !important; }
+      .lang-switch { display: none; }
+    }
+
+    /* ── 主容器 ── */
+    .main-container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 20px 20px 40px;
+    }
+
+    /* ── 总状态卡片 ── */
+    .overall-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--outline);
+      text-align: center;
+      padding: 40px 24px 32px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .overall-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .overall-card.status-operational::before { background: linear-gradient(90deg, #22C55E, #4ADE80); }
+    .overall-card.status-partial::before { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+    .overall-card.status-major::before { background: linear-gradient(90deg, #EF4444, #F87171); }
+    .overall-icon { font-size: 52px; line-height: 1; margin-bottom: 12px; }
+    .overall-title { font-size: 22px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; }
+    .overall-stats {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .stat-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(0,0,0,0.03);
+      color: var(--on-surface-variant);
+    }
+    body.dark-mode .stat-chip { background: rgba(255,255,255,0.05); }
+    .stat-chip.green { color: #22C55E; background: rgba(34,197,94,0.08); }
+    .stat-chip.red { color: #EF4444; background: rgba(239,68,68,0.08); }
+    .overall-time { font-size: 12px; color: var(--on-surface-variant); opacity: 0.4; }
+
+    /* ── 公告横幅 ── */
+    .incident-banner {
+      background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(245,158,11,0.03));
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      color: #B45309;
+    }
+    body.dark-mode .incident-banner {
+      background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(245,158,11,0.04));
+      color: #FBBF24;
+    }
+    .incident-banner .mdui-icon { font-size: 20px; flex-shrink: 0; }
+
+    /* ── 分组工具栏 ── */
+    .group-toolbar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding: 0 2px;
+    }
+    .group-toolbar.show { display: flex; }
+    .toolbar-left { display: flex; align-items: center; gap: 8px; }
+    .toolbar-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--outline);
+      background: var(--surface);
+      color: var(--on-surface-variant);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .toolbar-btn:hover { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.12); }
+    body.dark-mode .toolbar-btn { background: var(--surface); }
+    body.dark-mode .toolbar-btn:hover { background: rgba(255,255,255,0.05); }
+    .toolbar-btn .mdui-icon { font-size: 15px; }
+    .countdown-text {
+      font-size: 11px;
+      color: var(--on-surface-variant);
+      opacity: 0.3;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── 分组卡片 ── */
+    .group-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--outline);
+      margin-bottom: 16px;
+      overflow: hidden;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .group-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .group-header:hover { background: rgba(0,0,0,0.02); }
+    body.dark-mode .group-header:hover { background: rgba(255,255,255,0.03); }
+    .group-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(255,64,129,0.08), rgba(244,143,177,0.08));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    body.dark-mode .group-icon { background: linear-gradient(135deg, rgba(255,64,129,0.12), rgba(244,143,177,0.06)); }
+    .group-icon .mdui-icon { font-size: 18px; color: var(--accent); opacity: 0.7; }
+    .group-name { font-size: 14px; font-weight: 600; flex: 1; }
+    .group-count { font-size: 12px; font-weight: 600; }
+    .group-count.all-up { color: #22C55E; }
+    .group-count.has-down { color: #EF4444; }
+    .group-chevron {
+      font-size: 18px;
+      color: var(--on-surface-variant);
+      opacity: 0.3;
+      transition: transform 0.25s ease;
+    }
+    .group-card.collapsed .group-chevron { transform: rotate(-90deg); }
+    .group-body {
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .group-card.collapsed .group-body { max-height: 0 !important; }
+
+    /* ── 站点项 ── */
+    .site-item {
+      padding: 12px 18px;
+      border-top: 1px solid var(--outline);
+      transition: background 0.1s;
+    }
+    .site-item:hover { background: rgba(0,0,0,0.015); }
+    body.dark-mode .site-item:hover { background: rgba(255,255,255,0.02); }
+    .site-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .site-left { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; }
+    .site-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .site-dot.up { background: #22C55E; animation: pulse-green 2.5s infinite; }
+    .site-dot.down { background: #EF4444; animation: pulse-red 1.5s infinite; }
+    @keyframes pulse-green { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.3); } 70% { box-shadow: 0 0 0 5px rgba(34,197,94,0); } }
+    @keyframes pulse-red { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.35); } 70% { box-shadow: 0 0 0 5px rgba(239,68,68,0); } }
+    .site-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--on-surface);
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.15s;
+    }
+    .site-name:hover { color: var(--accent); }
+    .site-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+    .site-uptime { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .site-rt { font-size: 11px; opacity: 0.4; min-width: 48px; text-align: right; font-variant-numeric: tabular-nums; }
+    .site-rt.offline { color: #EF4444; opacity: 0.7; }
+    .ssl-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      height: 18px;
+    }
+    .ssl-chip.ok { background: rgba(34,197,94,0.08); color: #22C55E; }
+    .ssl-chip.warn { background: rgba(245,158,11,0.1); color: #F59E0B; }
+    .ssl-chip .mdui-icon { font-size: 10px; }
+
+    /* ── 响应时间统计 ── */
+    .rt-stats {
+      display: flex;
+      gap: 14px;
+      padding: 2px 0 2px 16px;
+      font-size: 10px;
+      opacity: 0.3;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── 可用性色块条 ── */
+    .uptime-bar-wrap {
+      display: flex;
+      gap: 2px;
+      height: 20px;
+      margin: 6px 0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .uptime-day {
+      flex: 1;
+      border-radius: 2px;
+      min-width: 0;
+      transition: opacity 0.1s;
+    }
+    .uptime-day:hover { opacity: 0.7; }
+    .uptime-day.empty { background: rgba(0,0,0,0.04); opacity: 0.4; }
+    body.dark-mode .uptime-day.empty { background: rgba(255,255,255,0.06); }
+
+    /* ── 响应时间图表 ── */
+    .chart-container { position: relative; margin-top: 4px; }
+    .response-chart {
+      width: 100%;
+      height: 100px;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.015);
+      display: block;
+    }
+    body.dark-mode .response-chart { background: rgba(255,255,255,0.02); }
+    .chart-tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: var(--surface);
+      border: 1px solid var(--outline);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
+      line-height: 1.4;
+      color: var(--on-surface);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      opacity: 0;
+      transition: opacity 0.1s, left 0.06s, top 0.06s;
+      transform: translate(-50%, 0);
+      white-space: nowrap;
+      z-index: 10;
+    }
+
+    /* ── 事件历史 ── */
+    .incident-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--outline);
+      margin-top: 20px;
+      overflow: hidden;
+    }
+    .incident-card-title {
+      padding: 16px 18px 8px;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .incident-card-title .mdui-icon { font-size: 20px; opacity: 0.5; }
+    .incident-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 18px;
+      border-top: 1px solid var(--outline);
+    }
+    .incident-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #F59E0B;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+    .incident-info { flex: 1; min-width: 0; }
+    .incident-site { font-size: 13px; font-weight: 500; }
+    .incident-site span { opacity: 0.3; font-size: 11px; margin-left: 4px; }
+    .incident-reason { font-size: 12px; color: var(--on-surface-variant); margin-top: 2px; }
+    .incident-time { font-size: 11px; opacity: 0.35; margin-top: 2px; }
+
+    /* ── 服务列表面板 ── */
+    .services-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--outline);
+      margin-top: 20px;
+      overflow: hidden;
+    }
+    .services-title {
+      padding: 16px 18px 8px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .service-group-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.3;
+      padding: 10px 18px 4px;
+    }
+    .service-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 18px;
+      min-height: 38px;
+    }
+    .service-item-name { font-size: 13px; }
+    .service-status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      height: 22px;
+    }
+    .service-status-chip.up { background: rgba(34,197,94,0.08); color: #22C55E; }
+    .service-status-chip.down { background: rgba(239,68,68,0.08); color: #EF4444; }
+    .service-status-chip .mdui-icon { font-size: 7px; }
+
+    /* ── 页脚 ── */
+    .page-footer {
+      text-align: center;
+      padding: 36px 16px 24px;
+      font-size: 12px;
+      color: var(--on-surface-variant);
+      opacity: 0.35;
+      line-height: 1.8;
+    }
+    .page-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      opacity: 0.7;
+    }
+    .page-footer a:hover { opacity: 1; }
+
+    /* ── 加载遮罩 ── */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(255,240,245,0.8);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    body.dark-mode .loading-overlay { background: rgba(15,15,15,0.8); }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255,64,129,0.15);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── 动画 ── */
+    .fade-in { animation: fadeIn 0.35s ease both; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .spinning .mdui-icon { animation: sp 0.5s ease; }
+    @keyframes sp { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+    /* ── 空状态 ── */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+    }
+    .empty-state .mdui-icon { font-size: 40px; opacity: 0.12; }
+    .empty-state p { font-size: 13px; opacity: 0.35; margin-top: 8px; }
+
+    /* ── 快捷键提示 ── */
+    .shortcuts-hint {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      padding: 8px 0;
+      font-size: 11px;
+      color: var(--on-surface-variant);
+      opacity: 0.2;
+    }
+    .shortcuts-hint kbd {
+      display: inline-block;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(0,0,0,0.05);
+      font-family: inherit;
+      font-size: 10px;
+    }
+    body.dark-mode .shortcuts-hint kbd { background: rgba(255,255,255,0.06); }
+
+    @media (max-width: 640px) {
+      .top-bar-inner { padding: 10px 16px; }
+      .main-container { padding: 16px 16px 32px; }
+      .overall-card { padding: 28px 16px 24px; }
+      .overall-title { font-size: 18px; }
+      .response-chart { height: 72px; }
+      .uptime-bar-wrap { height: 16px; }
+      .countdown-text { display: none; }
+      .shortcuts-hint { display: none; }
+      .group-header { padding: 12px 14px; }
+      .site-item { padding: 10px 14px; }
+    }
+    @media print {
+      .top-bar, .loading-overlay, .search-bar, .group-toolbar,
+      .mobile-lang-btn, .shortcuts-hint { display: none !important; }
+      body { background: #fff; color: #000; }
+      .site-dot { animation: none; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- ===== 顶栏 ===== -->
-<div class="mdui-appbar mdui-appbar-fixed mdui-color-white mdui-shadow-1">
-  <div class="mdui-toolbar mdui-color-white" style="padding:0 12px">
-    <img src="icon.png" style="height:26px;border-radius:6px;margin-right:8px" onerror="this.remove()">
-    <a class="mdui-typo-headline" style="font-weight:700;font-size:16px;text-decoration:none;color:#333" href=".">Sukiing</a>
-    <span style="font-size:11px;color:#999;margin-left:6px">服务状态</span>
-    <div class="mdui-toolbar-spacer"></div>
-    <span id="last-refresh-text" style="font-size:11px;color:#bbb;margin-right:2px"></span>
-    <span id="countdown-text" style="font-size:10px;color:#ccc;margin-right:4px"></span>
-    <button class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-ripple" onclick="toggleSearch()" mdui-tooltip="{content:'搜索'}"><i class="mdui-icon material-icons">search</i></button>
-    <button class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-ripple mobile-lang-btn" onclick="toggleMobileLang()" mdui-tooltip="{content:'语言'}"><i class="mdui-icon material-icons">translate</i></button>
-    <div class="lang-switch">
-      <button class="lang-btn active" data-lang="zh" onclick="switchLang('zh')">中</button>
-      <button class="lang-btn" data-lang="en" onclick="switchLang('en')">EN</button>
-      <button class="lang-btn" data-lang="ja" onclick="switchLang('ja')">日</button>
-    </div>
-    <button class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-ripple" onclick="toggleTheme()" mdui-tooltip="{content:'主题'}"><i class="mdui-icon material-icons" id="theme-icon">dark_mode</i></button>
-    <button class="mdui-btn mdui-btn-icon mdui-btn-dense mdui-ripple refresh-btn" onclick="refreshData()" mdui-tooltip="{content:'刷新'}"><i class="mdui-icon material-icons">refresh</i></button>
-  </div>
-</div>
-
-<!-- ===== 加载 ===== -->
-<div id="loading-overlay" class="loading-overlay">
-  <div class="mdui-spinner mdui-spinner-colorful" style="width:28px;height:28px"></div>
-</div>
-
-<!-- ===== 正文 ===== -->
-<main class="mdui-container" style="padding-top:76px;padding-bottom:40px;max-width:800px">
-
-  <div id="incident-banner"></div>
-  <div id="overall-status"></div>
-
-  <!-- 搜索 -->
-  <div id="search-bar" class="mdui-card mdui-shadow-1" style="display:none;padding:6px 12px;margin-bottom:12px">
-    <div style="display:flex;align-items:center;gap:6px">
-      <i class="mdui-icon material-icons" style="font-size:20px;opacity:.25">search</i>
-      <input id="search-input" type="text" style="flex:1;border:none;outline:none;font-size:14px;background:transparent" placeholder="搜索站点..." oninput="filterSites(this.value)">
-      <button class="mdui-btn mdui-btn-icon mdui-btn-dense" onclick="clearSearch()"><i class="mdui-icon material-icons" style="font-size:18px">close</i></button>
-    </div>
+  <!-- 加载遮罩 -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
   </div>
 
-  <!-- 展开/收起 -->
-  <div id="group-toolbar" style="display:none;text-align:right;margin-bottom:6px">
-    <button class="mdui-btn mdui-btn-dense mdui-ripple" onclick="expandAllGroups()" style="font-size:12px;min-width:0"><i class="mdui-icon material-icons" style="font-size:15px;margin-right:1px">unfold_more</i><span id="expand-all-text">展开全部</span></button>
-    <button class="mdui-btn mdui-btn-dense mdui-ripple" onclick="collapseAllGroups()" style="font-size:12px;min-width:0"><i class="mdui-icon material-icons" style="font-size:15px;margin-right:1px">unfold_less</i><span id="collapse-all-text">收起全部</span></button>
-  </div>
-
-  <div id="groups"></div>
-  <div id="incident-history"></div>
-
-  <!-- 服务列表 -->
-  <div class="mdui-card mdui-shadow-1" style="margin-top:12px">
-    <div class="mdui-card-primary" style="padding:12px 16px 6px">
-      <div class="mdui-card-primary-title" style="font-size:14px">
-        <i class="mdui-icon material-icons" style="font-size:18px;vertical-align:middle;margin-right:4px">list_alt</i>
-        <span id="services-heading">服务状态</span>
+  <!-- 顶部导航 -->
+  <div class="top-bar">
+    <div class="top-bar-inner">
+      <a class="top-bar-brand" href="./">
+        <img src="icon.png" alt="Sukiing">
+        <span>Sukiing Status</span>
+      </a>
+      <div class="top-bar-actions">
+        <div class="lang-switch" id="desktop-lang">
+          <button class="lang-btn active" data-lang="zh" onclick="switchLang('zh')">中</button>
+          <button class="lang-btn" data-lang="en" onclick="switchLang('en')">EN</button>
+          <button class="lang-btn" data-lang="ja" onclick="switchLang('ja')">日</button>
+        </div>
+        <button class="icon-btn mobile-lang-btn" onclick="showLangMenu()" title="Language">
+          <i class="mdui-icon material-icons">translate</i>
+        </button>
+        <button class="icon-btn" onclick="toggleSearch()" title="Search (S)">
+          <i class="mdui-icon material-icons">search</i>
+        </button>
+        <button class="icon-btn refresh-btn" onclick="refreshData()" title="Refresh (R)">
+          <i class="mdui-icon material-icons">refresh</i>
+        </button>
+        <button class="icon-btn" onclick="toggleTheme()" title="Theme (D)">
+          <i class="mdui-icon material-icons" id="theme-icon">dark_mode</i>
+        </button>
       </div>
     </div>
-    <div id="services-list"></div>
   </div>
 
-  <!-- 页脚 -->
-  <footer class="page-footer">
-    <div style="margin-bottom:2px"><img src="icon.png" style="width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-right:4px" onerror="this.remove()"><b>Sukiing</b> · 享你所爱之途</div>
-    <div style="font-size:11px;opacity:.4"><span id="footer-powered">Powered by GitHub Actions</span></div>
-  </footer>
+  <!-- 搜索栏 -->
+  <div class="search-bar" id="search-bar">
+    <div class="search-input-wrap">
+      <i class="mdui-icon material-icons">search</i>
+      <input class="search-input" id="search-input" type="text" placeholder="搜索站点..."
+             oninput="filterSites(this.value)">
+      <button class="search-clear" onclick="clearSearch()">
+        <i class="mdui-icon material-icons" style="font-size:16px">close</i>
+      </button>
+    </div>
+  </div>
 
-</main>
+  <!-- 主内容 -->
+  <div class="main-container">
 
-<!-- 移动端语言菜单 -->
-<ul id="mobile-lang-menu" class="mdui-menu" mdui-menu>
-  <li class="mdui-menu-item mdui-ripple active" data-lang="zh"><a>中文</a></li>
-  <li class="mdui-menu-item mdui-ripple" data-lang="en"><a>English</a></li>
-  <li class="mdui-menu-item mdui-ripple" data-lang="ja"><a>日本語</a></li>
-</ul>
+    <!-- 公告横幅 -->
+    <div id="incident-banner" class="incident-banner">
+      <i class="mdui-icon material-icons">warning</i>
+      <span></span>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/mdui@1.0.2/js/mdui.min.js"></script>
-<script src="i18n.js"></script>
-<script src="render.js"></script>
-<script>
-(function(){
-  var _menu=null;
-  window.toggleMobileLang=function(){
-    var el=document.getElementById('mobile-lang-menu');
-    if(!_menu) _menu=new mdui.Menu('.mobile-lang-btn',el,{covered:false});
-    _menu.open();
-  };
-  document.getElementById('mobile-lang-menu').addEventListener('click',function(e){
-    var li=e.target.closest('.mdui-menu-item');
-    if(!li)return;
-    var lang=li.dataset.lang;
-    if(lang){switchLang(lang);_menu.close();}
-  });
-})();
-</script>
+    <!-- 总状态 -->
+    <div id="overall-status"></div>
+
+    <!-- 分组工具栏 -->
+    <div class="group-toolbar" id="group-toolbar">
+      <div class="toolbar-left">
+        <button class="toolbar-btn" onclick="expandAllGroups()">
+          <i class="mdui-icon material-icons">unfold_more</i>
+          <span id="expand-all-text">展开全部</span>
+        </button>
+        <button class="toolbar-btn" onclick="collapseAllGroups()">
+          <i class="mdui-icon material-icons">unfold_less</i>
+          <span id="collapse-all-text">收起全部</span>
+        </button>
+      </div>
+      <span class="countdown-text" id="countdown-text">60s</span>
+    </div>
+
+    <!-- 分组列表 -->
+    <div id="groups"></div>
+
+    <!-- 事件历史 -->
+    <div id="incident-history"></div>
+
+    <!-- 服务列表 -->
+    <div class="services-card" id="services-list"></div>
+
+    <!-- 快捷键提示 -->
+    <div class="shortcuts-hint">
+      <span><kbd>R</kbd> 刷新</span>
+      <span><kbd>D</kbd> 深色</span>
+      <span><kbd>S</kbd> 搜索</span>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="page-footer">
+      <div>Sukiing · 享你所爱之途</div>
+      <div id="footer-powered">由 GitHub Actions 驱动</div>
+    </div>
+  </div>
+
+  <!-- 移动端语言菜单 -->
+  <div class="mdui-menu" id="mobile-lang-menu" style="min-width:100px">
+    <div class="mdui-menu-item" data-lang="zh" onclick="switchLang('zh')">
+      <div class="mdui-menu-item-text">中文</div>
+    </div>
+    <div class="mdui-menu-item" data-lang="en" onclick="switchLang('en')">
+      <div class="mdui-menu-item-text">English</div>
+    </div>
+    <div class="mdui-menu-item" data-lang="ja" onclick="switchLang('ja')">
+      <div class="mdui-menu-item-text">日本語</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mdui@2/mdui.min.js"></script>
+  <script src="i18n.js"></script>
+  <script src="render.js"></script>
+  <script>
+    function showLangMenu() {
+      var el = document.getElementById('mobile-lang-menu');
+      var btn = document.querySelector('.mobile-lang-btn');
+      if (el && btn) mdui.Menu(btn, el).open();
+    }
+  </script>
 </body>
 </html>
