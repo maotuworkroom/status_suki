@@ -2,35 +2,31 @@ name: Status Monitor
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
-concurrency:
-  group: status-monitor
-  cancel-in-progress: true
-
 jobs:
-  check:
+  monitor:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       issues: write
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
-      - name: Run status check
+      - name: Run monitor
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
