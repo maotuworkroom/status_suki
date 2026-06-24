@@ -171,7 +171,7 @@
 
   /** 获取 isDark 状态 */
   function isDark() {
-    return document.body.classList.contains("mdui-theme-layout-dark");
+    return document.body.classList.contains("dark-mode");
   }
 
   // ── 渲染：总状态横幅 ──────────────────────
@@ -403,11 +403,11 @@
     if (maxVal < 100) maxVal = 100;
 
     const dk = isDark();
-    const gridColor = dk ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
-    const textColor = dk ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.35)";
-    const lineColor = dk ? "#60a5fa" : "#3b82f6";
-    const fillColorTop = dk ? "rgba(96,165,250,0.18)" : "rgba(59,130,246,0.12)";
-    const fillColorBot = dk ? "rgba(96,165,250,0.01)" : "rgba(59,130,246,0.01)";
+    const gridColor = dk ? "rgba(173,20,87,0.1)" : "rgba(248,187,208,0.15)";
+    const textColor = dk ? "rgba(245,230,238,0.5)" : "rgba(33,33,33,0.35)";
+    const lineColor = dk ? "#F48FB1" : "#FF4081";
+    const fillColorTop = dk ? "rgba(244,143,177,0.2)" : "rgba(255,64,129,0.12)";
+    const fillColorBot = dk ? "rgba(244,143,177,0.01)" : "rgba(255,64,129,0.01)";
 
     ctx.clearRect(0, 0, W, H);
 
@@ -489,7 +489,7 @@
     ctx.fill();
     ctx.beginPath();
     ctx.arc(lastPt.x, lastPt.y, 2.5, 0, Math.PI * 2);
-    ctx.fillStyle = dk ? "#1e293b" : "#ffffff";
+    ctx.fillStyle = dk ? "#1a0a12" : "#ffffff";
     ctx.fill();
 
     // 存储点数据用于 tooltip
@@ -727,8 +727,8 @@
 
   window.toggleTheme = function () {
     const body = document.body;
-    body.classList.toggle("mdui-theme-layout-dark");
-    const dk = body.classList.contains("mdui-theme-layout-dark");
+    body.classList.toggle("dark-mode");
+    const dk = body.classList.contains("dark-mode");
     localStorage.setItem("status_theme", dk ? "dark" : "light");
 
     if (statusData) {
@@ -825,8 +825,8 @@
     if (collapseAll) collapseAll.textContent = t("ui.collapseAll");
     const servicesHeading = document.getElementById("services-heading");
     if (servicesHeading) servicesHeading.textContent = t("services.title");
-    const footerText = document.getElementById("footer-text");
-    if (footerText) footerText.textContent = t("footer.poweredBy") + " · © 2024";
+    const footerText = document.getElementById("footer-powered");
+    if (footerText) footerText.textContent = t("footer.poweredBy");
     const refreshHint = document.getElementById("footer-refresh-hint");
     if (refreshHint) refreshHint.textContent = t("ui.refresh");
     const themeHint = document.getElementById("footer-theme-hint");
@@ -841,7 +841,7 @@
 
     const savedTheme = localStorage.getItem("status_theme");
     if (savedTheme === "dark") {
-      document.body.classList.add("mdui-theme-layout-dark");
+      document.body.classList.add("dark-mode");
       const icon = document.getElementById("theme-icon");
       if (icon) icon.textContent = "light_mode";
     }

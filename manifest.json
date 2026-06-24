@@ -1,17 +1,28 @@
 {
-  "name": "Status Page",
-  "short_name": "Status",
-  "description": "Real-time website monitoring status page",
+  "name": "Sukiing 服务状态",
+  "short_name": "Sukiing",
+  "description": "Sukiing圣地巡礼站 - 服务状态监控",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f5f7fa",
-  "theme_color": "#6366f1",
-  "orientation": "any",
+  "background_color": "#FFF8FA",
+  "theme_color": "#F8BBD0",
+  "lang": "zh-CN",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%236366f1'/><circle cx='256' cy='256' r='140' fill='none' stroke='white' stroke-width='24'/><path d='M356 196 L236 316 L176 256' stroke='white' stroke-width='24' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>",
-      "sizes": "any",
-      "type": "image/svg+xml"
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

@@ -1,76 +1,66 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="description" content="Real-time website monitoring status page powered by GitHub Actions">
-  <meta name="theme-color" content="#6366f1">
+  <title>Sukiing 服务状态</title>
+  <meta name="description" content="Sukiing圣地巡礼站 - 服务状态监控。实时查看所有服务的运行状态、响应时间和历史可用率。">
+  <meta name="theme-color" content="#F8BBD0">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Sukiing Status">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Status Page">
-  <meta property="og:description" content="Real-time website monitoring status page">
+  <meta property="og:title" content="Sukiing 服务状态">
+  <meta property="og:description" content="Sukiing圣地巡礼站 - 实时服务状态监控">
+  <meta property="og:image" content="icon.png">
   <meta name="twitter:card" content="summary">
-  <title>Status Page</title>
-
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-
-  <!-- MDUI 组件库 -->
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="apple-touch-icon" href="icon.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.2/css/mdui.min.css">
-  <!-- Material Icons -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <!-- 自定义样式 -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap">
   <link rel="stylesheet" href="style.css">
-
-  <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2322c55e'/><path d='M30 52 L44 66 L70 38' stroke='white' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 </head>
 
-<body class="mdui-theme-primary-indigo mdui-theme-accent-pink">
+<body>
 
   <!-- 加载遮罩 -->
   <div id="loading-overlay" class="loading-overlay">
     <div class="loading-spinner"></div>
-    <span id="loading-text">加载中...</span>
   </div>
 
   <!-- 顶部导航栏 -->
   <header class="app-bar" role="banner">
-    <div class="app-bar-title">
-      <span id="page-title">Status Page</span>
-    </div>
-
-    <div class="app-bar-actions">
-      <span id="last-refresh-text"></span>
-      <span id="countdown-text">60s</span>
-
-      <!-- 搜索按钮 -->
-      <button class="app-bar-btn" onclick="toggleSearch()" title="Search (S)" aria-label="Search">
-        <i class="mdui-icon material-icons">search</i>
-      </button>
-
-      <!-- 语言切换（桌面端） -->
-      <div class="lang-switch">
-        <button class="lang-btn active" data-lang="zh" onclick="switchLang('zh')">中</button>
-        <button class="lang-btn" data-lang="en" onclick="switchLang('en')">EN</button>
-        <button class="lang-btn" data-lang="ja" onclick="switchLang('ja')">日</button>
+    <div class="app-bar-inner">
+      <div class="app-bar-title">
+        <img src="logo.webp" alt="Sukiing" class="app-logo" onerror="this.style.display='none'">
+        <div class="app-title-text">
+          <span class="app-title-main">Sukiing</span>
+          <span class="app-title-sub">服务状态</span>
+        </div>
       </div>
-
-      <!-- 语言切换（移动端） -->
-      <button class="app-bar-btn mobile-lang-btn" onclick="toggleMobileLang()" title="Language">
-        <i class="mdui-icon material-icons">translate</i>
-      </button>
-
-      <!-- 深色模式 -->
-      <button class="app-bar-btn" onclick="toggleTheme()" title="Toggle theme (D)">
-        <i class="mdui-icon material-icons" id="theme-icon">dark_mode</i>
-      </button>
-
-      <!-- 刷新 -->
-      <button class="app-bar-btn refresh-btn" onclick="refreshData()" title="Refresh (R)">
-        <i class="mdui-icon material-icons">refresh</i>
-      </button>
+      <div class="app-bar-actions">
+        <span id="last-refresh-text" class="refresh-hint" aria-live="polite"></span>
+        <span id="countdown-text" class="countdown" aria-hidden="true"></span>
+        <button class="app-bar-btn" onclick="toggleSearch()" title="搜索 (S)" aria-label="Search">
+          <i class="mdui-icon material-icons">search</i>
+        </button>
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button class="lang-btn active" data-lang="zh" onclick="switchLang('zh')">中</button>
+          <button class="lang-btn" data-lang="en" onclick="switchLang('en')">EN</button>
+          <button class="lang-btn" data-lang="ja" onclick="switchLang('ja')">日</button>
+        </div>
+        <button class="app-bar-btn mobile-lang-btn" onclick="toggleMobileLang()" title="Language" aria-label="Language">
+          <i class="mdui-icon material-icons">translate</i>
+        </button>
+        <button class="app-bar-btn" onclick="toggleTheme()" title="主题切换 (D)" aria-label="Toggle dark mode">
+          <i class="mdui-icon material-icons" id="theme-icon">dark_mode</i>
+        </button>
+        <button class="app-bar-btn refresh-btn" onclick="refreshData()" title="刷新 (R)" aria-label="Refresh">
+          <i class="mdui-icon material-icons">refresh</i>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -94,7 +84,7 @@
     <div id="search-bar" class="search-bar" style="display:none">
       <i class="mdui-icon material-icons search-icon">search</i>
       <input type="text" id="search-input" class="search-input" placeholder="搜索站点..." oninput="filterSites(this.value)" aria-label="Search sites">
-      <button class="search-clear" onclick="clearSearch()" aria-label="Clear search">
+      <button class="search-clear" onclick="clearSearch()" aria-label="Clear">
         <i class="mdui-icon material-icons">close</i>
       </button>
     </div>
@@ -126,26 +116,29 @@
 
     <!-- 页脚 -->
     <footer class="page-footer">
-      <div id="footer-text">Powered by GitHub Actions · © 2024</div>
-      <div style="margin-top:4px">
+      <div class="footer-brand">
+        <img src="icon.png" alt="" class="footer-icon" onerror="this.style.display='none'">
+        <span class="footer-name">Sukiing</span>
+        <span class="footer-sep">·</span>
+        <span id="footer-text">享你所爱之途</span>
+      </div>
+      <div class="footer-meta">
+        <span id="footer-powered">Powered by GitHub Actions</span>
+        <span class="footer-sep">·</span>
         <span class="kbd">R</span> <span id="footer-refresh-hint">刷新</span>
-        &nbsp;·&nbsp;
+        <span class="footer-sep">·</span>
         <span class="kbd">D</span> <span id="footer-theme-hint">主题</span>
       </div>
     </footer>
 
   </main>
 
-  <!-- 脚本 -->
   <script src="https://cdn.jsdelivr.net/npm/mdui@1.0.2/js/mdui.min.js"></script>
   <script src="i18n.js"></script>
   <script src="render.js"></script>
-
-  <!-- 移动端语言菜单控制 -->
   <script>
     function toggleMobileLang() {
-      var menu = document.getElementById('mobile-lang-menu');
-      menu.classList.toggle('show');
+      document.getElementById('mobile-lang-menu').classList.toggle('show');
     }
     function closeMobileLang() {
       document.getElementById('mobile-lang-menu').classList.remove('show');
