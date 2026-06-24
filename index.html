@@ -7,7 +7,14 @@
   <meta name="theme-color" content="#6366f1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Status Page">
+  <meta property="og:description" content="Real-time website monitoring status page">
+  <meta name="twitter:card" content="summary">
   <title>Status Page</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
 
   <!-- MDUI 组件库 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.2/css/mdui.min.css">
@@ -29,7 +36,7 @@
   </div>
 
   <!-- 顶部导航栏 -->
-  <header class="app-bar">
+  <header class="app-bar" role="banner">
     <div class="app-bar-title">
       <span id="page-title">Status Page</span>
     </div>
@@ -37,6 +44,11 @@
     <div class="app-bar-actions">
       <span id="last-refresh-text"></span>
       <span id="countdown-text">60s</span>
+
+      <!-- 搜索按钮 -->
+      <button class="app-bar-btn" onclick="toggleSearch()" title="Search (S)" aria-label="Search">
+        <i class="mdui-icon material-icons">search</i>
+      </button>
 
       <!-- 语言切换（桌面端） -->
       <div class="lang-switch">
@@ -77,6 +89,25 @@
 
     <!-- 总状态 -->
     <div id="overall-status" class="overall-status operational"></div>
+
+    <!-- 搜索栏 -->
+    <div id="search-bar" class="search-bar" style="display:none">
+      <i class="mdui-icon material-icons search-icon">search</i>
+      <input type="text" id="search-input" class="search-input" placeholder="搜索站点..." oninput="filterSites(this.value)" aria-label="Search sites">
+      <button class="search-clear" onclick="clearSearch()" aria-label="Clear search">
+        <i class="mdui-icon material-icons">close</i>
+      </button>
+    </div>
+
+    <!-- 分组工具栏 -->
+    <div id="group-toolbar" class="group-toolbar" style="display:none">
+      <button class="toolbar-btn" onclick="expandAllGroups()">
+        <i class="mdui-icon material-icons">unfold_more</i> <span id="expand-all-text">展开全部</span>
+      </button>
+      <button class="toolbar-btn" onclick="collapseAllGroups()">
+        <i class="mdui-icon material-icons">unfold_less</i> <span id="collapse-all-text">收起全部</span>
+      </button>
+    </div>
 
     <!-- 分组列表 -->
     <div id="groups"></div>

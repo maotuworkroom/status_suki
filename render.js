@@ -16,8 +16,9 @@
   let countdownTimer = null;
   let countdownSec = 60;
   const REFRESH_INTERVAL = 60;
+  let _searchQuery = "";
 
-  // ── 数据加载 ──────────────────────────────
+  // ── 数据加载（支持归档文件合并）──────────
 
   async function loadData() {
     try {
@@ -33,10 +34,78 @@
       ]);
       statusData = s;
       historyData = h;
+
+      // 尝试加载归档清单，合并归档数据
+      await mergeArchiveData();
     } catch (err) {
       console.error("数据加载失败:", err);
       statusData = null;
       historyData = null;
+    }
+  }
+
+  /**
+   * 读取 data/archive/manifest.json，加载所有归档文件
+   * 将归档中的 daily / responseTime / incidents 合并到 historyData
+   */
+  async function mergeArchiveData() {
+    try {
+      const manifestResp = await fetch("data/archive/manifest.json?v=" + Date.now());
+      if (!manifestResp.ok) return; // 没有归档文件，正常退出
+      const manifest = await manifestResp.json();
+      if (!manifest.files || manifest.files.length === 0) return;
+
+      // 并行加载所有归档文件
+      const archivePromises = manifest.files.map((fileName) =>
+        fetch("data/archive/" + fileName + "?v=" + Date.now())
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null)
+      );
+      const archives = await Promise.all(archivePromises);
+
+      // 合并每个归档文件的数据到 historyData
+      for (const archive of archives) {
+        if (!archive || !archive.sites) continue;
+        for (const [key, archSite] of Object.entries(archive.sites)) {
+          if (!historyData.sites) historyData.sites = {};
+          if (!historyData.sites[key]) {
+            historyData.sites[key] = {
+              daily: [],
+              responseTime: [],
+              incidents: [],
+              currentDown: null,
+            };
+          }
+          const mainSite = historyData.sites[key];
+
+          // 合并 daily（按日期去重）
+          if (archSite.daily?.length) {
+            const existingDates = new Set(mainSite.daily.map((d) => d.date));
+            for (const d of archSite.daily) {
+              if (!existingDates.has(d.date)) {
+                mainSite.daily.push(d);
+              }
+            }
+            mainSite.daily.sort((a, b) => a.date.localeCompare(b.date));
+          }
+
+          // 合并 incidents（按 start 去重）
+          if (archSite.incidents?.length) {
+            const existingStarts = new Set(mainSite.incidents.map((i) => i.start));
+            for (const inc of archSite.incidents) {
+              if (!existingStarts.has(inc.start)) {
+                mainSite.incidents.push(inc);
+              }
+            }
+            mainSite.incidents.sort((a, b) => a.start.localeCompare(b.start));
+          }
+
+          // responseTime 不合并到图表（归档数据量太大，图表只用主文件的近期数据）
+          // 但保留归档数据用于计算长期可用率
+        }
+      }
+    } catch (err) {
+      console.warn("归档数据加载跳过:", err.message);
     }
   }
 
@@ -208,12 +277,18 @@
 
       const canvasId = `chart-${group.name}-${site.name}`.replace(/[^a-zA-Z0-9-]/g, "_");
 
+      // 响应时间统计
+      const rtStats = calcResponseStats(hist);
+
+      // 搜索过滤标记
+      const siteVisible = !_searchQuery || site.name.toLowerCase().includes(_searchQuery.toLowerCase());
+
       html += `
-        <div class="site-item">
+        <div class="site-item" data-site-name="${site.name.toLowerCase()}" style="${siteVisible ? '' : 'display:none'}">
           <div class="site-row">
             <div class="site-left">
               <span class="site-status-dot ${isUp ? "up pulse" : "down pulse-red"}"></span>
-              <span class="site-name">${site.name}</span>
+              <a class="site-name site-link" href="${site.url}" target="_blank" rel="noopener" title="${t("ui.viewSite")}: ${site.url}">${site.name}</a>
               ${sslHTML}
             </div>
             <div class="site-right">
@@ -221,6 +296,7 @@
               <span class="site-rt ${isUp ? "" : "rt-offline"}">${isUp ? site.responseTime + "ms" : t("ui.offline")}</span>
             </div>
           </div>
+          ${rtStats ? `<div class="rt-stats"><span>${t("ui.min")} ${rtStats.min}ms</span><span>${t("ui.avg")} ${rtStats.avg}ms</span><span>${t("ui.max")} ${rtStats.max}ms</span></div>` : ''}
           <div class="uptime-bar-wrap" title="${t("chart.uptime30d")}">
             ${uptimeBarHTML}
           </div>
@@ -233,6 +309,17 @@
     }
 
     return html;
+  }
+
+  /** 计算响应时间统计 */
+  function calcResponseStats(hist) {
+    if (!hist?.responseTime?.length || hist.responseTime.length < 3) return null;
+    const vals = hist.responseTime.map((d) => d.value);
+    return {
+      min: Math.min(...vals),
+      max: Math.max(...vals),
+      avg: Math.round(vals.reduce((s, v) => s + v, 0) / vals.length),
+    };
   }
 
   /** 构建近 30 天可用性色块条形图 */
@@ -627,6 +714,63 @@
     if (icon) icon.textContent = dk ? "light_mode" : "dark_mode";
   };
 
+  // ── 交互：搜索过滤 ────────────────────────
+
+  window.toggleSearch = function () {
+    const bar = document.getElementById("search-bar");
+    if (!bar) return;
+    const visible = bar.style.display !== "none";
+    bar.style.display = visible ? "none" : "flex";
+    if (!visible) {
+      const input = document.getElementById("search-input");
+      if (input) { input.value = ""; input.focus(); }
+      _searchQuery = "";
+    }
+  };
+
+  window.filterSites = function (query) {
+    _searchQuery = query;
+    document.querySelectorAll(".site-item").forEach((el) => {
+      const name = el.dataset.siteName || "";
+      el.style.display = !query || name.includes(query.toLowerCase()) ? "" : "none";
+    });
+    // 如果搜索为空，显示 "没有匹配" 提示
+    const noResults = document.getElementById("no-results-msg");
+    if (noResults) {
+      const visible = document.querySelectorAll(".site-item:not([style*='display: none'])").length;
+      noResults.style.display = visible === 0 && query ? "block" : "none";
+    }
+  };
+
+  window.clearSearch = function () {
+    _searchQuery = "";
+    const input = document.getElementById("search-input");
+    if (input) input.value = "";
+    filterSites("");
+  };
+
+  // ── 交互：展开/收起全部 ──────────────────
+
+  window.expandAllGroups = function () {
+    document.querySelectorAll(".group-body").forEach((body) => {
+      body.classList.add("open");
+      body.style.maxHeight = body.scrollHeight + "px";
+    });
+    document.querySelectorAll(".group-arrow").forEach((a) => {
+      a.style.transform = "rotate(180deg)";
+    });
+  };
+
+  window.collapseAllGroups = function () {
+    document.querySelectorAll(".group-body").forEach((body) => {
+      body.classList.remove("open");
+      body.style.maxHeight = "0";
+    });
+    document.querySelectorAll(".group-arrow").forEach((a) => {
+      a.style.transform = "rotate(0deg)";
+    });
+  };
+
   // ── 交互：语言切换 ────────────────────────
 
   window.switchLang = function (lang) {
@@ -679,7 +823,10 @@
 
     // 键盘快捷键
     document.addEventListener("keydown", (e) => {
-      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
+        if (e.key === "Escape") clearSearch();
+        return;
+      }
       if (e.key === "r" || e.key === "R") {
         e.preventDefault();
         refreshData();
@@ -688,7 +835,15 @@
         e.preventDefault();
         toggleTheme();
       }
+      if (e.key === "s" || e.key === "S") {
+        e.preventDefault();
+        toggleSearch();
+      }
     });
+
+    // 显示分组工具栏
+    const toolbar = document.getElementById("group-toolbar");
+    if (toolbar) toolbar.style.display = "flex";
   }
 
   if (document.readyState === "loading") {

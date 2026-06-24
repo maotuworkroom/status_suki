@@ -860,3 +860,146 @@ body.mdui-theme-layout-dark .loading-overlay {
 }
 
 .mobile-lang-btn { display: none !important; }
+
+/* ── 搜索栏 ── */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  animation: fadeInUp 0.2s ease;
+}
+
+.search-icon {
+  font-size: 20px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--text);
+  font-family: inherit;
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.search-clear {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(0,0,0,0.04);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: background 0.15s;
+}
+
+.search-clear:hover { background: rgba(0,0,0,0.08); }
+body.mdui-theme-layout-dark .search-clear { background: rgba(255,255,255,0.06); }
+body.mdui-theme-layout-dark .search-clear:hover { background: rgba(255,255,255,0.1); }
+.search-clear .mdui-icon { font-size: 16px; }
+
+/* ── 站点可点击链接 ── */
+.site-link {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.15s;
+  cursor: pointer;
+}
+
+.site-link:hover {
+  color: var(--blue);
+  text-decoration: underline;
+}
+
+/* ── 响应时间统计行 ── */
+.rt-stats {
+  display: flex;
+  gap: 16px;
+  padding: 0 0 4px 18px;
+  font-size: 10px;
+  color: var(--text-secondary);
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+.rt-stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* ── 分组工具栏 ── */
+.group-toolbar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  justify-content: flex-end;
+}
+
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.toolbar-btn:hover {
+  background: rgba(0,0,0,0.03);
+  color: var(--text);
+}
+
+body.mdui-theme-layout-dark .toolbar-btn:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.toolbar-btn .mdui-icon { font-size: 16px; }
+
+/* ── 无搜索结果提示 ── */
+#no-results-msg {
+  display: none;
+  text-align: center;
+  padding: 24px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* ── 打印样式 ── */
+@media print {
+  .app-bar, .loading-overlay, .search-bar, .group-toolbar,
+  .mobile-lang-menu, .page-footer .kbd, #countdown-text { display: none !important; }
+  body { background: #fff; color: #000; }
+  .group-card { break-inside: avoid; border: 1px solid #ddd; box-shadow: none; }
+  .overall-status { box-shadow: none; border: 1px solid #ddd; }
+  .site-status-dot.pulse, .site-status-dot.pulse-red { animation: none; }
+  .response-chart { height: 80px; }
+}

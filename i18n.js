@@ -41,6 +41,15 @@ const I18N = {
     "banner.activeIncident": "当前存在活跃故障",
     "incidents.title": "历史故障记录",
     "footer.poweredBy": "由 GitHub Actions 驱动",
+    "ui.search": "搜索站点...",
+    "ui.noResults": "没有匹配的站点",
+    "ui.min": "最小",
+    "ui.max": "最大",
+    "ui.avg": "平均",
+    "ui.viewSite": "访问站点",
+    "ui.shortcuts": "快捷键",
+    "ui.expandAll": "展开全部",
+    "ui.collapseAll": "收起全部",
   },
 
   // ── English ──
@@ -77,6 +86,15 @@ const I18N = {
     "banner.activeIncident": "Active Incident Detected",
     "incidents.title": "Incident History",
     "footer.poweredBy": "Powered by GitHub Actions",
+    "ui.search": "Search sites...",
+    "ui.noResults": "No matching sites",
+    "ui.min": "Min",
+    "ui.max": "Max",
+    "ui.avg": "Avg",
+    "ui.viewSite": "Visit site",
+    "ui.shortcuts": "Shortcuts",
+    "ui.expandAll": "Expand all",
+    "ui.collapseAll": "Collapse all",
   },
 
   // ── 日本語 ──
@@ -113,6 +131,15 @@ const I18N = {
     "banner.activeIncident": "障害が発生中です",
     "incidents.title": "障害履歴",
     "footer.poweredBy": "GitHub Actions で稼働",
+    "ui.search": "サイトを検索...",
+    "ui.noResults": "一致するサイトがありません",
+    "ui.min": "最小",
+    "ui.max": "最大",
+    "ui.avg": "平均",
+    "ui.viewSite": "サイトを開く",
+    "ui.shortcuts": "ショートカット",
+    "ui.expandAll": "すべて展開",
+    "ui.collapseAll": "すべて折りたたむ",
   },
 };
 

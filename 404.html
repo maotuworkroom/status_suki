@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page Not Found</title>
+  <meta name="theme-color" content="#6366f1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.2/css/mdui.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2322c55e'/><path d='M30 52 L44 66 L70 38' stroke='white' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+  <style>
+    .error-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      text-align: center;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .error-code {
+      font-size: 96px;
+      font-weight: 900;
+      letter-spacing: -4px;
+      background: linear-gradient(135deg, #6366f1, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+    .error-msg {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .error-link {
+      margin-top: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 24px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 12px rgba(99,102,241,0.3);
+    }
+    .error-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="error-page">
+    <div class="error-code">404</div>
+    <div class="error-msg">Page Not Found</div>
+    <a class="error-link" href="./">
+      <i class="mdui-icon material-icons" style="font-size:18px">home</i>
+      Back to Status
+    </a>
+  </div>
+</body>
+</html>

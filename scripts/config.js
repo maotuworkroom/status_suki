@@ -84,6 +84,8 @@ module.exports = {
   history: {
     daysKeep: 90,           // 保留最近多少天的每日可用率数据
     maxResponsePoints: 288, // 响应时间曲线最大数据点数（每5分钟一个 = 288/天）
+    // 当 history.json 超过 90MB 时自动将旧月份数据归档到 data/archive/history-YYYY-MM.json
+    // 无需手动配置，脚本自动检测并拆分，确保单文件不超 GitHub 100MB 限制
   },
 
   // ── 告警设置 ─────────────────────────────

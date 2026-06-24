@@ -19,6 +19,11 @@ const config = require("./config");
 const DATA_DIR = path.join(__dirname, "..", "data");
 const STATUS_FILE = path.join(DATA_DIR, "status.json");
 const HISTORY_FILE = path.join(DATA_DIR, "history.json");
+const ARCHIVE_DIR = path.join(DATA_DIR, "archive");
+const MANIFEST_FILE = path.join(ARCHIVE_DIR, "manifest.json");
+
+// ── 分文件阈值 ────────────────────────────
+const MAX_FILE_BYTES = 90 * 1024 * 1024; // 90MB，超过此大小触发归档拆分
 
 // ── 工具函数 ──────────────────────────────
 
@@ -434,6 +439,175 @@ function recordIncident(siteData, isDown, reason) {
   }
 }
 
+// ── 分文件归档机制 ─────────────────────────
+
+/**
+ * 获取文件大小（字节），不存在返回 0
+ */
+function fileSize(filePath) {
+  try {
+    return fs.statSync(filePath).size;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * 将 history.json 中的旧数据按月归档到 data/archive/history-YYYY-MM.json
+ *
+ * 策略：
+ *   - responseTime 数组：超过 7 天的数据按月拆到归档文件
+ *   - daily 数组：超过 30 天的数据按月拆到归档文件
+ *   - incidents：已结束的、超过 30 天的故障记录拆到归档文件
+ *   - currentDown：始终保留在主文件
+ *   - 每次只拆最老的一个月，可反复触发直到文件缩小
+ */
+function splitHistoryIfNeeded(history) {
+  const currentSize = fileSize(HISTORY_FILE);
+  if (currentSize < MAX_FILE_BYTES) {
+    return false;
+  }
+
+  log(`[归档] history.json 当前 ${(currentSize / 1024 / 1024).toFixed(1)}MB，超过 90MB 阈值，开始拆分...`);
+
+  // 确保归档目录存在
+  if (!fs.existsSync(ARCHIVE_DIR)) {
+    fs.mkdirSync(ARCHIVE_DIR, { recursive: true });
+  }
+
+  // 加载归档清单
+  const manifest = loadJSON(MANIFEST_FILE, { files: [] });
+
+  // 找出所有站点中最老的月份
+  let oldestMonth = null;
+  for (const siteHist of Object.values(history.sites || {})) {
+    // 从 responseTime 找最老月份
+    for (const rt of siteHist.responseTime || []) {
+      const month = rt.time.slice(0, 7); // "YYYY-MM"
+      if (!oldestMonth || month < oldestMonth) {
+        oldestMonth = month;
+      }
+    }
+    // 从 daily 找最老月份
+    for (const d of siteHist.daily || []) {
+      const month = d.date.slice(0, 7);
+      if (!oldestMonth || month < oldestMonth) {
+        oldestMonth = month;
+      }
+    }
+  }
+
+  if (!oldestMonth) {
+    log("[归档] 没有可归档的旧数据");
+    return false;
+  }
+
+  // 当前月份（不归档当前月的数据）
+  const currentMonth = new Date().toISOString().slice(0, 7);
+  if (oldestMonth >= currentMonth) {
+    log("[归档] 最老数据属于当前月，跳过归档");
+    return false;
+  }
+
+  const archiveFileName = `history-${oldestMonth}.json`;
+  const archiveFilePath = path.join(ARCHIVE_DIR, archiveFileName);
+
+  log(`[归档] 归档月份: ${oldestMonth} → ${archiveFileName}`);
+
+  // 加载已有的归档文件（如果存在）
+  const archiveData = loadJSON(archiveFilePath, { sites: {} });
+  if (!archiveData.sites) archiveData.sites = {};
+
+  // 从 history 中提取该月份数据并移入归档
+  for (const [key, siteHist] of Object.entries(history.sites || {})) {
+    if (!archiveData.sites[key]) {
+      archiveData.sites[key] = {
+        daily: [],
+        responseTime: [],
+        incidents: [],
+      };
+    }
+
+    const arch = archiveData.sites[key];
+
+    // 归档 responseTime：该月份的数据
+    const keepRT = [];
+    for (const rt of siteHist.responseTime || []) {
+      if (rt.time.slice(0, 7) === oldestMonth) {
+        arch.responseTime.push(rt);
+      } else {
+        keepRT.push(rt);
+      }
+    }
+    siteHist.responseTime = keepRT;
+
+    // 归档 daily：该月份的数据
+    const keepDaily = [];
+    for (const d of siteHist.daily || []) {
+      if (d.date.slice(0, 7) === oldestMonth) {
+        arch.daily.push(d);
+      } else {
+        keepDaily.push(d);
+      }
+    }
+    siteHist.daily = keepDaily;
+
+    // 归档已结束且属于该月份的 incidents
+    const keepIncidents = [];
+    for (const inc of siteHist.incidents || []) {
+      if (inc.end && inc.start.slice(0, 7) === oldestMonth) {
+        arch.incidents.push(inc);
+      } else {
+        keepIncidents.push(inc);
+      }
+    }
+    siteHist.incidents = keepIncidents;
+  }
+
+  // 保存归档文件
+  saveJSON(archiveFilePath, archiveData);
+
+  // 更新归档清单
+  if (!manifest.files.includes(archiveFileName)) {
+    manifest.files.push(archiveFileName);
+    manifest.files.sort();
+  }
+  manifest.lastSplit = nowISO();
+  manifest.lastSplitMonth = oldestMonth;
+  saveJSON(MANIFEST_FILE, manifest);
+
+  // 保存缩减后的主文件
+  saveJSON(HISTORY_FILE, history);
+
+  const newSize = fileSize(HISTORY_FILE);
+  log(`[归档] 完成：${archiveFileName} 已生成，主文件缩减至 ${(newSize / 1024 / 1024).toFixed(1)}MB`);
+
+  return true;
+}
+
+/**
+ * 清理空的归档文件和无效的 manifest 条目
+ */
+function cleanArchives() {
+  if (!fs.existsSync(ARCHIVE_DIR)) return;
+
+  const manifest = loadJSON(MANIFEST_FILE, { files: [] });
+  const validFiles = [];
+
+  for (const fileName of manifest.files) {
+    const filePath = path.join(ARCHIVE_DIR, fileName);
+    if (fs.existsSync(filePath) && fileSize(filePath) > 10) {
+      validFiles.push(fileName);
+    }
+  }
+
+  if (validFiles.length !== manifest.files.length) {
+    manifest.files = validFiles;
+    saveJSON(MANIFEST_FILE, manifest);
+    log(`[归档] 清理了 ${manifest.files.length - validFiles.length} 个无效归档条目`);
+  }
+}
+
 // ── 主流程 ────────────────────────────────
 
 async function main() {
@@ -573,6 +747,16 @@ async function main() {
 
   saveJSON(STATUS_FILE, status);
   saveJSON(HISTORY_FILE, history);
+
+  // ── 分文件归档检测 ──
+  // 如果 history.json 超过 90MB，自动将旧月份数据拆到归档文件
+  // 可能需要多轮拆分（每轮拆一个月），循环直到低于阈值
+  for (let i = 0; i < 12; i++) {
+    const didSplit = splitHistoryIfNeeded(history);
+    if (!didSplit) break;
+    log(`[归档] 继续检测是否需要进一步拆分...`);
+  }
+  cleanArchives();
 
   log(`\n${"=".repeat(50)}`);
   log(`完成 — ${upSites}/${totalSites} 在线 (${status.overallStatus})`);
