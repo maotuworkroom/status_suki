@@ -1,15 +1,15 @@
 {
-  "lastUpdate": "2026-06-24T17:25:56.920Z",
+  "lastUpdate": "2026-06-24T17:32:38.198Z",
   "incidents": [],
   "daily": {
     "2026-06-24": {
       "sites": {
         "Database": {
-          "checks": 3,
-          "upChecks": 3,
-          "totalResponseTime": 714,
+          "checks": 4,
+          "upChecks": 4,
+          "totalResponseTime": 899,
           "downChecks": 0,
-          "avgResponseTime": 238
+          "avgResponseTime": 225
         }
       }
     }
@@ -27,6 +27,10 @@
       {
         "time": "2026-06-24T17:25:56.920Z",
         "value": 297
+      },
+      {
+        "time": "2026-06-24T17:32:38.198Z",
+        "value": 185
       }
     ]
   }
