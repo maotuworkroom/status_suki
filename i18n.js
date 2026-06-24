@@ -1,13 +1,12 @@
 /**
  * ============================================
- *  多语言模块 (i18n)
+ *  Sukiing 服务状态 — 多语言模块
  *  支持：中文(zh) / English(en) / 日本語(ja)
  *  自动检测浏览器语言，可手动切换
  * ============================================
  */
 
 const I18N = {
-  // ── 中文 ──
   zh: {
     "status.operational": "系统一切正常",
     "status.partial": "部分服务故障",
@@ -32,15 +31,6 @@ const I18N = {
     "ui.loading": "加载中...",
     "ui.unknown": "未知",
     "ui.group.online": "{online}/{total} 在线",
-    "chart.responseTime": "响应时间 (ms)",
-    "chart.uptime30d": "近 30 天可用性",
-    "services.title": "服务状态",
-    "services.operational": "正常运行",
-    "services.degraded": "性能降级",
-    "services.down": "服务中断",
-    "banner.activeIncident": "当前存在活跃故障",
-    "incidents.title": "历史故障记录",
-    "footer.poweredBy": "由 GitHub Actions 驱动",
     "ui.search": "搜索站点...",
     "ui.noResults": "没有匹配的站点",
     "ui.min": "最小",
@@ -50,9 +40,17 @@ const I18N = {
     "ui.shortcuts": "快捷键",
     "ui.expandAll": "展开全部",
     "ui.collapseAll": "收起全部",
+    "chart.responseTime": "响应时间 (ms)",
+    "chart.uptime30d": "近 30 天可用性",
+    "services.title": "服务状态",
+    "services.operational": "正常运行",
+    "services.degraded": "性能降级",
+    "services.down": "服务中断",
+    "banner.activeIncident": "当前存在活跃故障",
+    "incidents.title": "历史故障记录",
+    "footer.poweredBy": "由 GitHub Actions 驱动",
   },
 
-  // ── English ──
   en: {
     "status.operational": "All Systems Operational",
     "status.partial": "Partial System Outage",
@@ -77,15 +75,6 @@ const I18N = {
     "ui.loading": "Loading...",
     "ui.unknown": "Unknown",
     "ui.group.online": "{online}/{total} online",
-    "chart.responseTime": "Response Time (ms)",
-    "chart.uptime30d": "30-Day Uptime",
-    "services.title": "Service Status",
-    "services.operational": "Operational",
-    "services.degraded": "Degraded",
-    "services.down": "Outage",
-    "banner.activeIncident": "Active Incident Detected",
-    "incidents.title": "Incident History",
-    "footer.poweredBy": "Powered by GitHub Actions",
     "ui.search": "Search sites...",
     "ui.noResults": "No matching sites",
     "ui.min": "Min",
@@ -95,9 +84,17 @@ const I18N = {
     "ui.shortcuts": "Shortcuts",
     "ui.expandAll": "Expand all",
     "ui.collapseAll": "Collapse all",
+    "chart.responseTime": "Response Time (ms)",
+    "chart.uptime30d": "30-Day Uptime",
+    "services.title": "Service Status",
+    "services.operational": "Operational",
+    "services.degraded": "Degraded",
+    "services.down": "Outage",
+    "banner.activeIncident": "Active Incident Detected",
+    "incidents.title": "Incident History",
+    "footer.poweredBy": "Powered by GitHub Actions",
   },
 
-  // ── 日本語 ──
   ja: {
     "status.operational": "すべてのシステムが正常に動作しています",
     "status.partial": "一部のシステムに障害が発生しています",
@@ -122,15 +119,6 @@ const I18N = {
     "ui.loading": "読み込み中...",
     "ui.unknown": "不明",
     "ui.group.online": "{online}/{total} オンライン",
-    "chart.responseTime": "応答時間 (ms)",
-    "chart.uptime30d": "30日間の稼働率",
-    "services.title": "サービス状態",
-    "services.operational": "正常",
-    "services.degraded": "低下",
-    "services.down": "障害",
-    "banner.activeIncident": "障害が発生中です",
-    "incidents.title": "障害履歴",
-    "footer.poweredBy": "GitHub Actions で稼働",
     "ui.search": "サイトを検索...",
     "ui.noResults": "一致するサイトがありません",
     "ui.min": "最小",
@@ -140,12 +128,21 @@ const I18N = {
     "ui.shortcuts": "ショートカット",
     "ui.expandAll": "すべて展開",
     "ui.collapseAll": "すべて折りたたむ",
+    "chart.responseTime": "応答時間 (ms)",
+    "chart.uptime30d": "30日間の稼働率",
+    "services.title": "サービス状態",
+    "services.operational": "正常",
+    "services.degraded": "低下",
+    "services.down": "障害",
+    "banner.activeIncident": "障害が発生中です",
+    "incidents.title": "障害履歴",
+    "footer.poweredBy": "GitHub Actions で稼働",
   },
 };
 
 let _currentLang = "zh";
 
-function detectLanguage() {
+const detectLanguage = () => {
   const saved = localStorage.getItem("status_lang");
   if (saved && I18N[saved]) {
     _currentLang = saved;
@@ -156,26 +153,24 @@ function detectLanguage() {
   else if (nav.startsWith("en")) _currentLang = "en";
   else _currentLang = "zh";
   return _currentLang;
-}
+};
 
-function t(key, vars = {}) {
+const t = (key, vars = {}) => {
   let str =
-    (I18N[_currentLang] && I18N[_currentLang][key]) ||
-    (I18N["en"] && I18N["en"][key]) ||
+    I18N[_currentLang]?.[key] ??
+    I18N.en?.[key] ??
     key;
   for (const [k, v] of Object.entries(vars)) {
     str = str.replace(`{${k}}`, v);
   }
   return str;
-}
+};
 
-function setLanguage(lang) {
+const setLanguage = (lang) => {
   if (!I18N[lang]) return;
   _currentLang = lang;
   localStorage.setItem("status_lang", lang);
   document.documentElement.lang = lang;
-}
+};
 
-function getLanguage() {
-  return _currentLang;
-}
+const getLanguage = () => _currentLang;
