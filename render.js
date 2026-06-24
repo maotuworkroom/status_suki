@@ -593,9 +593,7 @@
       "expand-all-text": ["textContent", t("ui.expandAll")],
       "collapse-all-text": ["textContent", t("ui.collapseAll")],
       "services-heading": ["textContent", t("services.title")],
-      "footer-powered": ["textContent", t("footer.poweredBy")],
-      "footer-refresh-hint": ["textContent", t("ui.refresh")],
-      "footer-theme-hint": ["textContent", t("ui.darkMode")]
+      "footer-powered": ["textContent", t("footer.poweredBy")]
     };
     Object.keys(ids).forEach(function(id) {
       var el = document.getElementById(id);

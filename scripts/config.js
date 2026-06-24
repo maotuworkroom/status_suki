@@ -9,9 +9,9 @@ module.exports = {
 
   // ── 页面基础设置 ──────────────────────────
   page: {
-    title: "lyc8503's Status Page",   // 页面标题（支持中英文自动切换时用 i18n 覆盖）
-    footer: "Powered by GitHub Actions · © 2024",  // 页脚文案
-    logo: "",                          // 可选：顶部 logo 图片 URL，留空则不显示
+    title: "Sukiing 服务状态",
+    footer: "享你所爱之途",
+    logo: "icon.png",
   },
 
   // ── 探测参数 ─────────────────────────────
@@ -29,53 +29,43 @@ module.exports = {
   //  ★ 提交后 Actions 自动检测并更新页面 ★
   groups: [
     {
-      name: "Public",         // 分组名称
-      icon: "public",         // Material Icons 图标名
+      name: "Sukiing",
+      icon: "favorite",
       sites: [
         {
-          name: "Homepage",
-          url: "https://example.com",
-          keyword: "",        // 页面关键词检测，留空则只检查状态码
+          name: "Sukiing 网页版",
+          url: "https://sukiing.lmc.edu.deal",
+          keyword: "",
         },
         {
-          name: "API Server",
-          url: "https://api.example.com/health",
+          name: "Sukiing API",
+          url: "https://sukiing.lmc.edu.deal/api/health",
           keyword: "ok",
-        },
-        {
-          name: "Blog",
-          url: "https://blog.example.com",
-          keyword: "",
-        },
-        {
-          name: "CDN",
-          url: "https://cdn.example.com",
-          keyword: "",
         },
       ],
     },
     {
-      name: "Internal",
-      icon: "lock",
+      name: "外部依赖",
+      icon: "link",
       sites: [
         {
-          name: "Dashboard",
-          url: "https://dash.example.com",
-          keyword: "login",
+          name: "GitHub",
+          url: "https://github.com",
+          keyword: "",
         },
         {
-          name: "Database Monitor",
-          url: "https://db.example.com/status",
-          keyword: "healthy",
+          name: "GitHub API",
+          url: "https://api.github.com",
+          keyword: "current_user_url",
         },
       ],
     },
     // ── 新增分组示例 ──
     // {
-    //   name: "Anime",
-    //   icon: "anime",
+    //   name: "新分组",
+    //   icon: "cloud",
     //   sites: [
-    //     { name: "Bangumi", url: "https://bgm.tv", keyword: "" },
+    //     { name: "站点A", url: "https://a.com", keyword: "" },
     //   ],
     // },
   ],
