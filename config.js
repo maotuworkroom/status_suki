@@ -10,11 +10,11 @@
 const CONFIG = {
 
   // ========== 页面基础设置 ==========
-  pageTitle: "Sukiing Status",            // 页面标题（显示在顶部）
-  pageSubtitle: "Sukiing Service Monitor",  // 页面副标题
-  copyright: "© Sukiing",  // 底部版权文字
+  pageTitle: "Suki.ing Status",            // 页面标题（显示在顶部）
+  pageSubtitle: "Suki.ing Service Monitor",  // 页面副标题
+  copyright: "© Suki.ing",  // 底部版权文字
 
-  // ========== 主题配色（对齐 Sukiing 圣地巡礼站樱花粉风格） ==========
+  // ========== 主题配色（对齐 Suki.ing 圣地巡礼站樱花粉风格） ==========
   theme: {
     primary: "#F8BBD0",       // 主色调（樱花淡粉）
     primaryDark: "#F48FB1",   // 主色调深色
