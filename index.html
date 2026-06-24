@@ -3,111 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>lyc8503's Status Page</title>
-  <meta name="description" content="实时监控站点状态、响应时间和可用率">
+  <title>Sukiing Status</title>
+  <meta name="description" content="Sukiing 服务状态监控">
   <meta name="theme-color" content="#F8BBD0">
   <link rel="icon" href="logo.webp" type="image/webp">
-
-  <!-- Material Symbols 图标字体 -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
-  <!-- Noto Sans SC 字体 -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
-
-  <!-- 自定义样式 -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-  <!-- ========== 顶部导航栏 ========== -->
-  <header class="app-bar">
-    <div class="app-bar-inner">
-      <div class="app-bar-title">
-        <img src="logo.webp" alt="Logo" class="app-bar-logo" id="appBarLogo">
-        <span id="pageTitle">lyc8503's Status Page</span>
-      </div>
-      <div class="app-bar-actions">
-        <!-- 语言切换 -->
-        <button class="icon-btn" id="langBtn" title="Language">
-          <span class="material-symbols-outlined">language</span>
-        </button>
-        <!-- 深色模式切换 -->
-        <button class="icon-btn" id="themeBtn" title="Dark Mode">
-          <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
-        </button>
-        <!-- 刷新按钮 -->
-        <button class="icon-btn" id="refreshBtn" title="Refresh">
-          <span class="material-symbols-outlined">refresh</span>
-        </button>
-      </div>
-    </div>
-  </header>
+  <div class="page">
 
-  <!-- 语言选择下拉菜单 -->
-  <div class="lang-menu" id="langMenu">
-    <div class="lang-option" data-lang="zh-CN">🇨🇳 简体中文</div>
-    <div class="lang-option" data-lang="zh-TW">🇹🇼 繁體中文</div>
-    <div class="lang-option" data-lang="en-US">🇺🇸 English</div>
-    <div class="lang-option" data-lang="ja-JP">🇯🇵 日本語</div>
-    <div class="lang-option" data-lang="ko-KR">🇰🇷 한국어</div>
+    <!-- 顶栏 -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="topbar-left">
+          <img src="logo.webp" alt="" class="topbar-logo" id="appBarLogo">
+          <span class="topbar-title" id="pageTitle">Sukiing Status</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn-icon" id="langBtn" title="Language">
+            <span class="material-symbols-outlined">language</span>
+          </button>
+          <button class="btn-icon" id="themeBtn" title="Theme">
+            <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
+          </button>
+          <button class="btn-icon" id="refreshBtn" title="Refresh">
+            <span class="material-symbols-outlined">refresh</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 语言菜单 -->
+    <div class="lang-menu" id="langMenu">
+      <div class="lang-opt" data-lang="zh-CN">🇨🇳 简体中文</div>
+      <div class="lang-opt" data-lang="zh-TW">🇹🇼 繁體中文</div>
+      <div class="lang-opt" data-lang="en-US">🇺🇸 English</div>
+      <div class="lang-opt" data-lang="ja-JP">🇯🇵 日本語</div>
+      <div class="lang-opt" data-lang="ko-KR">🇰🇷 한국어</div>
+    </div>
+
+    <!-- 主区域 -->
+    <main class="content">
+
+      <!-- 加载态 -->
+      <div class="loader" id="loadingOverlay">
+        <div class="spinner"></div>
+        <span data-i18n="loading">加载中...</span>
+      </div>
+
+      <!-- 全局状态 -->
+      <section class="hero" id="globalStatusCard" data-status="operational">
+        <div class="hero-icon" id="globalStatusIcon">
+          <span class="material-symbols-outlined">check_circle</span>
+        </div>
+        <h1 class="hero-text" id="globalStatusText">系统一切正常</h1>
+        <p class="hero-sub">
+          <span data-i18n="lastUpdated">最后更新于</span>
+          <span id="lastUpdateTime">--:--:--</span>
+          <span id="lastUpdateAgo"></span>
+        </p>
+      </section>
+
+      <!-- 分组 -->
+      <div id="groupsContainer"></div>
+
+      <!-- 服务总览 -->
+      <section class="card" id="serviceListSection">
+        <h2 class="card-title">
+          <span class="material-symbols-outlined">list_alt</span>
+          <span data-i18n="serviceStatus">服务状态总览</span>
+        </h2>
+        <div id="serviceList"></div>
+      </section>
+
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+      <p id="copyrightText">© Sukiing</p>
+      <p class="footer-sub">
+        <span data-i18n="autoRefresh">每60秒自动刷新</span> ·
+        <span data-i18n="poweredBy">基于 GitHub Actions 静态检测</span>
+      </p>
+    </footer>
+
   </div>
 
-  <!-- ========== 主内容区 ========== -->
-  <main class="main-content">
-
-    <!-- 加载状态 -->
-    <div class="loading-overlay" id="loadingOverlay">
-      <div class="loading-spinner"></div>
-      <p data-i18n="loading">加载中...</p>
-    </div>
-
-    <!-- 全局状态概览模块 -->
-    <section class="global-status-card" id="globalStatusCard">
-      <div class="global-status-icon" id="globalStatusIcon">
-        <span class="material-symbols-outlined">check_circle</span>
-      </div>
-      <h1 class="global-status-text" id="globalStatusText">系统一切正常</h1>
-      <p class="global-status-sub" id="globalStatusSub">
-        <span data-i18n="lastUpdated">最后更新于</span>：
-        <span id="lastUpdateTime">--:--:--</span>
-        <span id="lastUpdateAgo"></span>
-      </p>
-    </section>
-
-    <!-- 站点分组列表 -->
-    <div id="groupsContainer"></div>
-
-    <!-- 底部服务状态列表 -->
-    <section class="service-list-section" id="serviceListSection">
-      <h2 class="section-title">
-        <span class="material-symbols-outlined">list_alt</span>
-        <span data-i18n="serviceStatus">服务状态总览</span>
-      </h2>
-      <div class="service-list" id="serviceList"></div>
-    </section>
-
-    <!-- 公告横幅模块 -->
-    <section class="announcement-section" id="announcementSection" style="display:none;">
-      <div class="announcement-banner">
-        <span class="material-symbols-outlined announcement-icon">campaign</span>
-        <div class="announcement-content" id="announcementContent"></div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ========== 底部版权 ========== -->
-  <footer class="app-footer">
-    <p id="copyrightText">© 2024 lyc8503 · Powered by GitHub Actions & Pages</p>
-    <p class="footer-sub">
-      <span data-i18n="autoRefresh">自动刷新</span> ·
-      <span data-i18n="poweredBy">基于 GitHub Actions 静态检测</span>
-    </p>
-  </footer>
-
-  <!-- 加载配置和渲染脚本 -->
   <script src="config.js"></script>
   <script src="render.js"></script>
-
 </body>
 </html>
