@@ -282,17 +282,104 @@ function getStatusIcon(status) {
 async function loadAllData() {
   const cacheBuster = `?t=${Date.now()}`;
   try {
-    const [statusRes, historyRes] = await Promise.all([
+    // 先加载 manifest 和 status
+    const [manifestRes, statusRes] = await Promise.all([
+      fetch(`data/manifest.json${cacheBuster}`).catch(() => null),
       fetch(`data/status.json${cacheBuster}`),
-      fetch(`data/history.json${cacheBuster}`),
     ]);
 
-    if (statusRes.ok) {
+    if (statusRes && statusRes.ok) {
       statusData = await statusRes.json();
     }
-    if (historyRes.ok) {
-      historyData = await historyRes.json();
+
+    // 解析 manifest，获取所有 history 文件列表
+    let historyFiles = ["history.json"];
+    if (manifestRes && manifestRes.ok) {
+      const manifest = await manifestRes.json();
+      if (manifest.files && manifest.files.length > 0) {
+        historyFiles = [...manifest.files, "history.json"];
+      }
     }
+
+    // 并行加载所有 history 文件并合并
+    const historyResponses = await Promise.all(
+      historyFiles.map((f) =>
+        fetch(`data/${f}${cacheBuster}`).catch(() => null)
+      )
+    );
+
+    const merged = { daily: {}, incidents: [], responseTimeHistory: {} };
+
+    for (const res of historyResponses) {
+      if (!res || !res.ok) continue;
+      const data = await res.json();
+
+      // 合并 daily
+      if (data.daily) {
+        for (const [date, val] of Object.entries(data.daily)) {
+          if (!merged.daily[date]) {
+            merged.daily[date] = val;
+          } else {
+            // 合并同一天不同站点的数据
+            for (const [site, stats] of Object.entries(val.sites || {})) {
+              if (!merged.daily[date].sites[site]) {
+                merged.daily[date].sites[site] = stats;
+              } else {
+                const target = merged.daily[date].sites[site];
+                target.checks += stats.checks || 0;
+                target.upChecks += stats.upChecks || 0;
+                target.downChecks += stats.downChecks || 0;
+                target.totalResponseTime =
+                  (target.totalResponseTime || 0) + (stats.totalResponseTime || 0);
+                target.avgResponseTime =
+                  target.upChecks > 0
+                    ? Math.round(target.totalResponseTime / target.upChecks)
+                    : 0;
+              }
+            }
+          }
+        }
+      }
+
+      // 合并 incidents
+      if (data.incidents) {
+        merged.incidents.push(...data.incidents);
+      }
+
+      // 合并 responseTimeHistory
+      if (data.responseTimeHistory) {
+        for (const [site, points] of Object.entries(data.responseTimeHistory)) {
+          if (!merged.responseTimeHistory[site]) {
+            merged.responseTimeHistory[site] = [];
+          }
+          merged.responseTimeHistory[site].push(...points);
+        }
+      }
+
+      // 更新 lastUpdate 为最新的
+      if (data.lastUpdate) {
+        if (!merged.lastUpdate || data.lastUpdate > merged.lastUpdate) {
+          merged.lastUpdate = data.lastUpdate;
+        }
+      }
+    }
+
+    // 对 responseTimeHistory 按时间排序并限制数量
+    for (const site of Object.keys(merged.responseTimeHistory)) {
+      merged.responseTimeHistory[site].sort(
+        (a, b) => new Date(a.time) - new Date(b.time)
+      );
+      // 只保留最近 500 个点，避免渲染过慢
+      if (merged.responseTimeHistory[site].length > 500) {
+        merged.responseTimeHistory[site] =
+          merged.responseTimeHistory[site].slice(-500);
+      }
+    }
+
+    // 对 incidents 按时间排序
+    merged.incidents.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+    historyData = merged;
   } catch (e) {
     console.error("加载数据失败:", e);
   }

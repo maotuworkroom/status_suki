@@ -4,73 +4,16 @@
   "groups": [
     {
       "name": "Public",
-      "online": 4,
-      "total": 4,
+      "online": 1,
+      "total": 1,
       "sites": [
         {
-          "name": "主站",
-          "url": "https://example.com",
+          "name": "Database",
+          "url": "https://sukicdn.suki.ing/pic/data/866/images/428735.jpg",
           "status": "up",
-          "responseTime": 156,
-          "sslDaysLeft": 365,
-          "uptime": 99.99,
-          "lastCheck": "2024-01-01T00:00:00.000Z",
-          "error": ""
-        },
-        {
-          "name": "API 接口",
-          "url": "https://api.example.com/health",
-          "status": "up",
-          "responseTime": 89,
-          "sslDaysLeft": 365,
-          "uptime": 99.95,
-          "lastCheck": "2024-01-01T00:00:00.000Z",
-          "error": ""
-        },
-        {
-          "name": "CDN 加速",
-          "url": "https://cdn.example.com",
-          "status": "up",
-          "responseTime": 42,
-          "sslDaysLeft": 365,
-          "uptime": 100.00,
-          "lastCheck": "2024-01-01T00:00:00.000Z",
-          "error": ""
-        },
-        {
-          "name": "博客",
-          "url": "https://blog.example.com",
-          "status": "up",
-          "responseTime": 234,
-          "sslDaysLeft": 365,
-          "uptime": 99.87,
-          "lastCheck": "2024-01-01T00:00:00.000Z",
-          "error": ""
-        }
-      ]
-    },
-    {
-      "name": "Internal",
-      "online": 2,
-      "total": 2,
-      "sites": [
-        {
-          "name": "数据库面板",
-          "url": "https://db.example.com/status",
-          "status": "up",
-          "responseTime": 201,
-          "sslDaysLeft": 365,
-          "uptime": 99.90,
-          "lastCheck": "2024-01-01T00:00:00.000Z",
-          "error": ""
-        },
-        {
-          "name": "监控面板",
-          "url": "https://grafana.example.com/api/health",
-          "status": "up",
-          "responseTime": 178,
-          "sslDaysLeft": 365,
-          "uptime": 99.99,
+          "responseTime": 0,
+          "sslDaysLeft": -1,
+          "uptime": 100,
           "lastCheck": "2024-01-01T00:00:00.000Z",
           "error": ""
         }

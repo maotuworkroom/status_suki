@@ -10,9 +10,9 @@
 const CONFIG = {
 
   // ========== 页面基础设置 ==========
-  pageTitle: "lyc8503's Status Page",    // 页面标题（显示在顶部）
+  pageTitle: "Sukiing Status",            // 页面标题（显示在顶部）
   pageSubtitle: "Sukiing Service Monitor",  // 页面副标题
-  copyright: "© 2024 lyc8503 · Powered by GitHub Actions & Pages",  // 底部版权文字
+  copyright: "© Sukiing",  // 底部版权文字
 
   // ========== 主题配色（对齐 Sukiing 圣地巡礼站樱花粉风格） ==========
   theme: {
@@ -48,56 +48,15 @@ const CONFIG = {
   // 每个分组包含名称、图标和站点列表
   groups: [
     {
-      name: "Public",           // 分组名称
-      icon: "public",           // Material Symbols 图标名称
+      name: "Public",
+      icon: "public",
       sites: [
         {
-          name: "主站",                    // 站点显示名称
-          url: "https://example.com",     // 探测地址
-          method: "GET",                  // 请求方法（GET/HEAD）
-          expectedStatus: 200,            // 期望状态码
-          keyword: "",                    // 页面关键词（留空则不检测）
-        },
-        {
-          name: "API 接口",
-          url: "https://api.example.com/health",
+          name: "Database",
+          url: "https://sukicdn.suki.ing/pic/data/866/images/428735.jpg",
           method: "GET",
-          expectedStatus: 200,
-          keyword: '"status":"ok"',
-        },
-        {
-          name: "CDN 加速",
-          url: "https://cdn.example.com",
-          method: "HEAD",
           expectedStatus: 200,
           keyword: "",
-        },
-        {
-          name: "博客",
-          url: "https://blog.example.com",
-          method: "GET",
-          expectedStatus: 200,
-          keyword: "blog",
-        },
-      ],
-    },
-    {
-      name: "Internal",
-      icon: "lan",
-      sites: [
-        {
-          name: "数据库面板",
-          url: "https://db.example.com/status",
-          method: "GET",
-          expectedStatus: 200,
-          keyword: "healthy",
-        },
-        {
-          name: "监控面板",
-          url: "https://grafana.example.com/api/health",
-          method: "GET",
-          expectedStatus: 200,
-          keyword: "ok",
         },
       ],
     },

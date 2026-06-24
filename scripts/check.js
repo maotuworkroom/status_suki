@@ -27,6 +27,10 @@ const config = require("../config.js");
 const DATA_DIR = path.join(__dirname, "..", "data");
 const STATUS_FILE = path.join(DATA_DIR, "status.json");
 const HISTORY_FILE = path.join(DATA_DIR, "history.json");
+const MANIFEST_FILE = path.join(DATA_DIR, "manifest.json");
+
+// 文件大小阈值（90MB，GitHub 单文件上限 100MB）
+const MAX_FILE_BYTES = 90 * 1024 * 1024;
 
 // Git 配置
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || "";
@@ -280,7 +284,7 @@ function gitCommit() {
     execSync('git config user.email "bot@status-monitor.local"', {
       cwd: path.join(__dirname, ".."),
     });
-    execSync("git add data/status.json data/history.json", {
+    execSync("git add data/status.json data/history.json data/manifest.json data/history-*.json", {
       cwd: path.join(__dirname, ".."),
     });
 
@@ -441,6 +445,44 @@ function githubAPI(method, apiPath, body = null) {
     if (body) req.write(JSON.stringify(body));
     req.end();
   });
+}
+
+/**
+ * 检查 history.json 是否接近大小上限，若超限则归档
+ * 策略：将当前 history.json 重命名为 history-{timestamp}.json，
+ *       新建空的 history.json 继续写入，
+ *       manifest.json 记录所有归档文件列表供前端读取。
+ * @returns {Object} 当前可用的 history 数据（归档后为空壳，未归档则原样返回）
+ */
+function archiveIfNeeded() {
+  const manifest = loadJSON(MANIFEST_FILE);
+  if (!manifest.files) manifest.files = [];
+
+  let fileSize = 0;
+  try {
+    if (fs.existsSync(HISTORY_FILE)) {
+      fileSize = fs.statSync(HISTORY_FILE).size;
+    }
+  } catch (_) {}
+
+  if (fileSize < MAX_FILE_BYTES) {
+    return null; // 未触发归档
+  }
+
+  // 生成归档文件名：history-20240625T120000Z.json
+  const ts = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
+  const archiveName = `history-${ts}.json`;
+  const archivePath = path.join(DATA_DIR, archiveName);
+
+  // 重命名当前 history.json → 归档文件
+  fs.renameSync(HISTORY_FILE, archivePath);
+  console.log(`📦 history.json 已达 ${(fileSize / 1024 / 1024).toFixed(1)}MB，归档为 ${archiveName}`);
+
+  // 更新 manifest
+  manifest.files.push(archiveName);
+  saveJSON(MANIFEST_FILE, manifest);
+
+  return true; // 触发了归档
 }
 
 /**
@@ -636,9 +678,23 @@ async function main() {
   history = cleanOldData(history);
   history.lastUpdate = now;
 
+  // 检查是否需要归档（history.json 接近 90MB 时拆分）
+  const didArchive = archiveIfNeeded();
+  if (didArchive) {
+    console.log("📦 已触发归档，本次写入新的 history.json");
+  }
+
   // 保存数据
   saveJSON(STATUS_FILE, newStatus);
   saveJSON(HISTORY_FILE, history);
+
+  // 初始化 / 更新 manifest
+  const manifest = loadJSON(MANIFEST_FILE);
+  if (!manifest.files) manifest.files = [];
+  manifest.lastUpdate = now;
+  manifest.currentFile = "history.json";
+  saveJSON(MANIFEST_FILE, manifest);
+
   console.log("💾 数据已保存");
 
   // Git 提交
