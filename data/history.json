@@ -1,6 +1,25 @@
 {
-  "lastUpdate": "2024-01-01T00:00:00.000Z",
+  "lastUpdate": "2026-06-24T17:20:09.663Z",
   "incidents": [],
-  "daily": {},
-  "responseTimeHistory": {}
+  "daily": {
+    "2026-06-24": {
+      "sites": {
+        "Database": {
+          "checks": 1,
+          "upChecks": 1,
+          "totalResponseTime": 119,
+          "downChecks": 0,
+          "avgResponseTime": 119
+        }
+      }
+    }
+  },
+  "responseTimeHistory": {
+    "Database": [
+      {
+        "time": "2026-06-24T17:20:09.663Z",
+        "value": 119
+      }
+    ]
+  }
 }

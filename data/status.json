@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2024-01-01T00:00:00.000Z",
+  "lastUpdate": "2026-06-24T17:20:09.663Z",
   "globalStatus": "operational",
   "groups": [
     {
@@ -11,11 +11,12 @@
           "name": "Database",
           "url": "https://sukicdn.suki.ing/pic/data/866/images/428735.jpg",
           "status": "up",
-          "responseTime": 0,
-          "sslDaysLeft": -1,
-          "uptime": 100,
-          "lastCheck": "2024-01-01T00:00:00.000Z",
-          "error": ""
+          "responseTime": 119,
+          "sslDaysLeft": 42,
+          "lastCheck": "2026-06-24T17:20:09.798Z",
+          "error": "",
+          "httpStatus": 200,
+          "uptime": 100
         }
       ]
     }
