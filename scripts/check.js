@@ -292,9 +292,14 @@ function gitCommit() {
     }
 
     execSync(
-      "git add data/status.json data/history.json data/manifest.json data/history-*.json",
+      "git add data/status.json data/history.json data/manifest.json",
       { cwd }
     );
+
+    // 归档文件是可选的，单独 add 不影响主文件
+    try {
+      execSync("git add data/history-*.json", { cwd, stdio: "ignore" });
+    } catch (_) {}
 
     // 检查是否有变更
     const status = execSync("git status --porcelain", { cwd, encoding: "utf8" });
