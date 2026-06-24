@@ -1,0 +1,51 @@
+name: Status Monitor
+
+on:
+  # 定时触发：每5分钟检测一次
+  # 修改 cron 表达式可调整检测频率
+  # 注意：GitHub Actions 最小间隔为5分钟
+  schedule:
+    - cron: '*/5 * * * *'
+
+  # 支持手动触发（用于调试）
+  workflow_dispatch:
+
+# 确保同一时间只有一个实例运行
+concurrency:
+  group: status-monitor
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write    # 需要写入权限来推送数据
+      issues: write      # 需要 Issue 权限来创建/关闭告警
+
+    steps:
+      # 检出仓库代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 完整历史，确保 push 正常
+
+      # 设置 Node.js 环境
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 执行检测脚本
+      - name: Run status check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/check.js
+
+      # 部署 GitHub Pages（可选：如果需要自动部署页面）
+      # 如果你已经手动开启了 Pages，可以注释掉下面的步骤
+      # - name: Deploy to GitHub Pages
+      #   uses: peaceiris/actions-gh-pages@v3
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_branch: gh-pages
+      #     publish_dir: ./
