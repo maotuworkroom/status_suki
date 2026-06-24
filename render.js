@@ -403,11 +403,11 @@
     if (maxVal < 100) maxVal = 100;
 
     const dk = isDark();
-    const gridColor = dk ? "rgba(173,20,87,0.1)" : "rgba(248,187,208,0.15)";
-    const textColor = dk ? "rgba(245,230,238,0.5)" : "rgba(33,33,33,0.35)";
-    const lineColor = dk ? "#F48FB1" : "#FF4081";
-    const fillColorTop = dk ? "rgba(244,143,177,0.2)" : "rgba(255,64,129,0.12)";
-    const fillColorBot = dk ? "rgba(244,143,177,0.01)" : "rgba(255,64,129,0.01)";
+    const gridColor = dk ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)";
+    const textColor = dk ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)";
+    const lineColor = dk ? "#555" : "#aaa";
+    const fillColorTop = dk ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)";
+    const fillColorBot = dk ? "rgba(255,255,255,0.01)" : "rgba(0,0,0,0.01)";
 
     ctx.clearRect(0, 0, W, H);
 
@@ -489,7 +489,7 @@
     ctx.fill();
     ctx.beginPath();
     ctx.arc(lastPt.x, lastPt.y, 2.5, 0, Math.PI * 2);
-    ctx.fillStyle = dk ? "#1a0a12" : "#ffffff";
+    ctx.fillStyle = dk ? "#1a1a1a" : "#ffffff";
     ctx.fill();
 
     // 存储点数据用于 tooltip
