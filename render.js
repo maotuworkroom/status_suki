@@ -73,9 +73,11 @@ function renderHero(){
   const c=document.getElementById("globalStatusCard"),ic=document.getElementById("globalStatusIcon"),
     tx=document.getElementById("globalStatusText"),ti=document.getElementById("lastUpdateTime"),
     ag=document.getElementById("lastUpdateAgo");
-  if(!statusData){c.setAttribute("data-status","down");ic.querySelector(".material-symbols-outlined").textContent="cloud_off";tx.textContent=t("errorLoad");return}
+  if(!statusData){c.setAttribute("data-status","down");ic.innerHTML='<span class="hero-status hero-err">×</span>';tx.textContent=t("errorLoad");return}
   const g=statusData.globalStatus||"operational";c.setAttribute("data-status",g);
-  ic.querySelector(".material-symbols-outlined").textContent=stIcon(g);
+  if(g==="operational")ic.innerHTML='<span class="hero-status hero-ok"></span>';
+  else if(g==="degraded")ic.innerHTML='<span class="hero-status hero-warn">△</span>';
+  else ic.innerHTML='<span class="hero-status hero-err">×</span>';
   tx.textContent=g==="operational"?t("allNormal"):g==="degraded"?t("partialDown"):t("allDown");
   ti.textContent=clock(statusData.lastUpdate);ag.textContent=" · "+ago(statusData.lastUpdate)
 }
