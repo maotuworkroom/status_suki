@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>status</title></head>
+<body><pre id="r">loading...</pre>
+<script>
+fetch("data/status.json?t="+Date.now()).then(r=>r.json()).then(d=>{
+  document.getElementById("r").textContent=d.globalStatus==="operational"?"OK":"issue"
+}).catch(()=>{document.getElementById("r").textContent="issue"})
+</script></body></html>
