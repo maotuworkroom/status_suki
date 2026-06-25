@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-06-25T16:04:50.751Z",
+  "lastUpdate": "2026-06-25T18:24:39.198Z",
   "incidents": [],
   "daily": {
     "2026-06-24": {
@@ -23,64 +23,24 @@
     "2026-06-25": {
       "sites": {
         "Database": {
-          "checks": 10,
-          "upChecks": 10,
-          "totalResponseTime": 2107,
+          "checks": 11,
+          "upChecks": 11,
+          "totalResponseTime": 2285,
           "downChecks": 0,
-          "avgResponseTime": 211
+          "avgResponseTime": 208
         },
         "CommentSys": {
-          "checks": 10,
-          "upChecks": 10,
-          "totalResponseTime": 1519,
+          "checks": 11,
+          "upChecks": 11,
+          "totalResponseTime": 1641,
           "downChecks": 0,
-          "avgResponseTime": 152
+          "avgResponseTime": 149
         }
       }
     }
   },
   "responseTimeHistory": {
     "Database": [
-      {
-        "time": "2026-06-24T17:20:09.663Z",
-        "value": 119
-      },
-      {
-        "time": "2026-06-24T17:21:13.898Z",
-        "value": 298
-      },
-      {
-        "time": "2026-06-24T17:25:56.920Z",
-        "value": 297
-      },
-      {
-        "time": "2026-06-24T17:32:38.198Z",
-        "value": 185
-      },
-      {
-        "time": "2026-06-24T17:34:44.905Z",
-        "value": 270
-      },
-      {
-        "time": "2026-06-24T17:37:24.171Z",
-        "value": 397
-      },
-      {
-        "time": "2026-06-24T17:38:38.690Z",
-        "value": 144
-      },
-      {
-        "time": "2026-06-24T17:42:40.568Z",
-        "value": 182
-      },
-      {
-        "time": "2026-06-24T18:06:29.106Z",
-        "value": 211
-      },
-      {
-        "time": "2026-06-24T18:23:10.277Z",
-        "value": 314
-      },
       {
         "time": "2026-06-24T20:18:09.848Z",
         "value": 288
@@ -132,21 +92,13 @@
       {
         "time": "2026-06-25T16:04:50.751Z",
         "value": 135
+      },
+      {
+        "time": "2026-06-25T18:24:39.198Z",
+        "value": 178
       }
     ],
     "CommentSys": [
-      {
-        "time": "2026-06-24T17:42:40.568Z",
-        "value": 195
-      },
-      {
-        "time": "2026-06-24T18:06:29.106Z",
-        "value": 151
-      },
-      {
-        "time": "2026-06-24T18:23:10.277Z",
-        "value": 141
-      },
       {
         "time": "2026-06-24T20:18:09.848Z",
         "value": 194
@@ -198,6 +150,10 @@
       {
         "time": "2026-06-25T16:04:50.751Z",
         "value": 126
+      },
+      {
+        "time": "2026-06-25T18:24:39.198Z",
+        "value": 122
       }
     ]
   }
