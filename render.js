@@ -22,6 +22,24 @@ function clock(iso){
 function upLvl(v){if(v==null)return"none";if(v>=99.5)return"good";if(v>=95)return"fair";if(v>=90)return"warn";return"bad"}
 function stIcon(s){return s==="operational"?"check_circle":s==="degraded"?"warning":"cancel"}
 
+function dotStatus(site){
+  if(site.status==="down")return"err";
+  if(site.responseTime>1000)return"warn";
+  return"ok";
+}
+function dotHTML(site,cls){
+  const s=dotStatus(site);
+  if(s==="ok")return`<span class="st-dot st-ok ${cls||""}"></span>`;
+  if(s==="warn")return`<span class="st-dot st-warn ${cls||""}">△</span>`;
+  return`<span class="st-dot st-err ${cls||""}">×</span>`;
+}
+function dotLabel(site){
+  const s=dotStatus(site);
+  if(s==="ok")return t("operational");
+  if(s==="warn")return t("degraded");
+  return t("down");
+}
+
 async function loadData(){
   const cb=`?t=${Date.now()}`;
   try{
@@ -78,7 +96,7 @@ function renderGroups(){
 
     g.sites.forEach(s=>{
       const el=document.createElement("div");el.className="site";
-      el.innerHTML=`<div class="site-row"><div class="site-l"><span class="dot ${s.status}"></span><span class="site-name">${esc(s.name)}</span></div><span class="site-up">${(s.uptime||0).toFixed(2)}%</span></div>`;
+      el.innerHTML=`<div class="site-row"><div class="site-l">${dotHTML(s)}<span class="site-name">${esc(s.name)}</span></div><span class="site-up">${(s.uptime||0).toFixed(2)}%</span></div>`;
       const blk=document.createElement("div");blk.className="blocks";mkBlocks(blk,s.name);
       const ch=document.createElement("div");ch.className="chart";const cv=document.createElement("canvas");ch.appendChild(cv);
       const meta=document.createElement("div");meta.className="site-meta";
@@ -137,8 +155,8 @@ function renderSvc(){
   statusData.groups.forEach(g=>{
     g.sites.forEach(s=>{
       const el=document.createElement("div");el.className="svc-item";
-      const up=s.status==="up";
-      el.innerHTML=`<span class="svc-l"><span class="dot ${s.status}" style="width:6px;height:6px"></span>${esc(s.name)}</span><span class="svc-r ${s.status}"><span class="material-symbols-outlined">${up?"check_circle":"cancel"}</span>${up?t("operational"):t("down")}</span>`;
+      const ds=dotStatus(s);
+      el.innerHTML=`<span class="svc-l">${dotHTML(s)}${esc(s.name)}</span><span class="svc-r ${ds==="ok"?"up":ds}"><span class="material-symbols-outlined">${ds==="ok"?"check_circle":ds==="warn"?"warning":"cancel"}</span>${dotLabel(s)}</span>`;
       box.appendChild(el)
     })
   })

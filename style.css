@@ -171,10 +171,25 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
 .site:hover{background:rgba(var(--pink-rgb),.04)}
 .site-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .site-l{display:flex;align-items:center;gap:8px}
-.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.dot.up{background:var(--ok);box-shadow:0 0 0 3px var(--ok-bg)}
-.dot.down{background:var(--err);box-shadow:0 0 0 3px var(--err-bg);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 3px var(--err-bg)}50%{box-shadow:0 0 0 6px rgba(244,67,54,.08)}}
+
+/* 三级状态指示器 */
+.st-dot{display:inline-flex;align-items:center;justify-content:center;
+  width:14px;height:14px;flex-shrink:0;font-size:13px;line-height:1}
+
+/* 正常：绿色空心圆形 */
+.st-ok{width:11px;height:11px;border-radius:50%;
+  border:2px solid var(--ok);background:transparent}
+
+/* 预警：黄色空心三角 */
+.st-warn{width:14px;height:14px;color:var(--warn);font-weight:400;
+  line-height:1;margin-top:-1px}
+
+/* 故障：红色粗叉号 */
+.st-err{width:14px;height:14px;color:var(--err);font-size:16px;
+  font-weight:700;line-height:1;letter-spacing:-1px}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.st-err{animation:pulse 2s infinite}
 .site-name{font-size:13px;font-weight:500}
 .site-up{font-size:13px;font-weight:700;color:var(--orange);letter-spacing:.01em}
 
@@ -211,8 +226,12 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;
 .svc-item:first-child{border-top:none}
 .svc-item:hover{background:rgba(var(--pink-rgb),.04)}
 .svc-l{display:flex;align-items:center;gap:8px;font-size:13px}
+.svc-l .st-ok{width:9px;height:9px}
+.svc-l .st-warn{width:12px;height:12px;font-size:11px}
+.svc-l .st-err{width:12px;height:12px;font-size:13px}
 .svc-r{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;letter-spacing:.02em}
 .svc-r.up{color:var(--ok)}
+.svc-r.warn{color:var(--warn)}
 .svc-r.down{color:var(--err)}
 .svc-r .material-symbols-outlined{font-size:15px;font-variation-settings:'FILL' 1}
 
