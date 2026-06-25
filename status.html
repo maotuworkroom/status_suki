@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>status</title></head>
-<body><pre id="r">loading...</pre>
-<script>
-fetch("data/status.json?t="+Date.now()).then(r=>r.json()).then(d=>{
-  document.getElementById("r").textContent=d.globalStatus==="operational"?"OK":"issue"
-}).catch(()=>{document.getElementById("r").textContent="issue"})
-</script></body></html>
+<html><head><meta charset="UTF-8"><title>status</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{margin:0;display:flex;align-items:center;justify-content:center;height:100vh;font-family:system-ui,sans-serif;font-size:48px;font-weight:700;letter-spacing:.05em}.ok{color:#4CAF50}.issue{color:#FF9800}.error{color:#F44336}</style>
+</head><body><span class="ok">OK</span></body></html>

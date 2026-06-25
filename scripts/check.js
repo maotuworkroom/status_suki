@@ -292,7 +292,7 @@ function gitCommit() {
     }
 
     execSync(
-      "git add data/status.json data/history.json data/manifest.json",
+      "git add data/status.json data/history.json data/manifest.json status.html",
       { cwd }
     );
 
@@ -704,6 +704,14 @@ async function main() {
   // 保存数据
   saveJSON(STATUS_FILE, newStatus);
   saveJSON(HISTORY_FILE, history);
+
+  // 写入静态 status.html（纯文本，无 JS）
+  const STATUS_HTML_FILE = path.join(__dirname, "..", "status.html");
+  const global = newStatus.globalStatus;
+  const label = global === "operational" ? "OK" : global === "degraded" ? "issue" : "error";
+  const cls = global === "operational" ? "ok" : global === "degraded" ? "issue" : "error";
+  const html = `<!DOCTYPE html>\n<html><head><meta charset="UTF-8"><title>status</title>\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<style>body{margin:0;display:flex;align-items:center;justify-content:center;height:100vh;font-family:system-ui,sans-serif;font-size:48px;font-weight:700;letter-spacing:.05em}.ok{color:#4CAF50}.issue{color:#FF9800}.error{color:#F44336}</style>\n</head><body><span class="${cls}">${label}</span></body></html>\n`;
+  fs.writeFileSync(STATUS_HTML_FILE, html, "utf8");
 
   // 初始化 / 更新 manifest
   const manifest = loadJSON(MANIFEST_FILE);
