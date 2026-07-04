@@ -53,9 +53,9 @@ const CONFIG = {
       sites: [
         {
           name: "Database",
-          url: "https://sukicdn.suki.ing/pic/data/866/images/428735.jpg",
+          url: "https://sukicdn.suki.ing/pic/data/866/images/428735.jpg?cdn=3",
           method: "GET",
-          expectedStatus: 200,
+          expectedStatus: 302,
           keyword: "",
         },
         {
