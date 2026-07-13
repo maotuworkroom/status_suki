@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-07-13T17:48:14.156Z",
+  "lastUpdate": "2026-07-13T19:07:01.478Z",
   "globalStatus": "operational",
   "groups": [
     {
@@ -11,9 +11,9 @@
           "name": "Database",
           "url": "https://sukicdn.suki.ing/pic/data/866/images/428735.jpg?cdn=3",
           "status": "up",
-          "responseTime": 104,
-          "sslDaysLeft": 81,
-          "lastCheck": "2026-07-13T17:48:14.276Z",
+          "responseTime": 131,
+          "sslDaysLeft": 80,
+          "lastCheck": "2026-07-13T19:07:01.623Z",
           "error": "",
           "httpStatus": 302,
           "uptime": 99.58
@@ -22,9 +22,9 @@
           "name": "CommentSys",
           "url": "https://giscus.app/zh-CN",
           "status": "up",
-          "responseTime": 77,
-          "sslDaysLeft": 56,
-          "lastCheck": "2026-07-13T17:48:14.452Z",
+          "responseTime": 160,
+          "sslDaysLeft": 55,
+          "lastCheck": "2026-07-13T19:07:01.813Z",
           "error": "",
           "httpStatus": 200,
           "uptime": 100
