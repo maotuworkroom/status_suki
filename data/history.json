@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-07-21T09:45:18.263Z",
+  "lastUpdate": "2026-07-21T11:32:41.232Z",
   "incidents": [
     {
       "site": "Database",
@@ -507,28 +507,24 @@
     "2026-07-21": {
       "sites": {
         "Database": {
-          "checks": 4,
-          "upChecks": 4,
-          "totalResponseTime": 814,
+          "checks": 5,
+          "upChecks": 5,
+          "totalResponseTime": 988,
           "downChecks": 0,
-          "avgResponseTime": 204
+          "avgResponseTime": 198
         },
         "CommentSys": {
-          "checks": 4,
-          "upChecks": 4,
-          "totalResponseTime": 572,
+          "checks": 5,
+          "upChecks": 5,
+          "totalResponseTime": 667,
           "downChecks": 0,
-          "avgResponseTime": 143
+          "avgResponseTime": 133
         }
       }
     }
   },
   "responseTimeHistory": {
     "Database": [
-      {
-        "time": "2026-07-20T10:26:09.265Z",
-        "value": 114
-      },
       {
         "time": "2026-07-20T12:34:15.418Z",
         "value": 227
@@ -576,13 +572,13 @@
       {
         "time": "2026-07-21T09:45:18.263Z",
         "value": 110
+      },
+      {
+        "time": "2026-07-21T11:32:41.232Z",
+        "value": 174
       }
     ],
     "CommentSys": [
-      {
-        "time": "2026-07-20T10:26:09.265Z",
-        "value": 174
-      },
       {
         "time": "2026-07-20T12:34:15.418Z",
         "value": 152
@@ -630,6 +626,10 @@
       {
         "time": "2026-07-21T09:45:18.263Z",
         "value": 100
+      },
+      {
+        "time": "2026-07-21T11:32:41.232Z",
+        "value": 95
       }
     ]
   }
