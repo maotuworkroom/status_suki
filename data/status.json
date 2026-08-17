@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-08-17T15:14:19.148Z",
+  "lastUpdate": "2026-08-17T15:44:04.289Z",
   "globalStatus": "operational",
   "groups": [
     {
@@ -13,7 +13,7 @@
           "status": "up",
           "responseTime": 148,
           "sslDaysLeft": 46,
-          "lastCheck": "2026-08-17T15:14:19.341Z",
+          "lastCheck": "2026-08-17T15:44:04.479Z",
           "error": "",
           "httpStatus": 302,
           "uptime": 100
@@ -22,9 +22,9 @@
           "name": "CommentSys",
           "url": "https://giscus.app/zh-CN",
           "status": "up",
-          "responseTime": 154,
+          "responseTime": 153,
           "sslDaysLeft": 83,
-          "lastCheck": "2026-08-17T15:14:19.553Z",
+          "lastCheck": "2026-08-17T15:44:04.743Z",
           "error": "",
           "httpStatus": 200,
           "uptime": 99.82
