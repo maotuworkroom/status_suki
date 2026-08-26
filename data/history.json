@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-08-26T18:28:14.555Z",
+  "lastUpdate": "2026-08-26T21:02:06.092Z",
   "incidents": [
     {
       "site": "Database",
@@ -1170,40 +1170,24 @@
     "2026-08-26": {
       "sites": {
         "Database": {
-          "checks": 19,
-          "upChecks": 19,
-          "totalResponseTime": 3120,
+          "checks": 20,
+          "upChecks": 20,
+          "totalResponseTime": 3313,
           "downChecks": 0,
-          "avgResponseTime": 164
+          "avgResponseTime": 166
         },
         "CommentSys": {
-          "checks": 19,
-          "upChecks": 19,
-          "totalResponseTime": 3067,
+          "checks": 20,
+          "upChecks": 20,
+          "totalResponseTime": 3166,
           "downChecks": 0,
-          "avgResponseTime": 161
+          "avgResponseTime": 158
         }
       }
     }
   },
   "responseTimeHistory": {
     "Database": [
-      {
-        "time": "2026-08-25T18:52:17.579Z",
-        "value": 217
-      },
-      {
-        "time": "2026-08-25T19:28:32.518Z",
-        "value": 167
-      },
-      {
-        "time": "2026-08-25T19:57:40.020Z",
-        "value": 223
-      },
-      {
-        "time": "2026-08-25T20:38:23.305Z",
-        "value": 139
-      },
       {
         "time": "2026-08-25T21:03:25.401Z",
         "value": 192
@@ -1307,25 +1291,13 @@
       {
         "time": "2026-08-26T18:28:14.555Z",
         "value": 167
+      },
+      {
+        "time": "2026-08-26T21:02:06.092Z",
+        "value": 193
       }
     ],
     "CommentSys": [
-      {
-        "time": "2026-08-25T18:52:17.579Z",
-        "value": 145
-      },
-      {
-        "time": "2026-08-25T19:28:32.518Z",
-        "value": 368
-      },
-      {
-        "time": "2026-08-25T19:57:40.020Z",
-        "value": 156
-      },
-      {
-        "time": "2026-08-25T20:38:23.305Z",
-        "value": 116
-      },
       {
         "time": "2026-08-25T21:03:25.401Z",
         "value": 131
@@ -1429,6 +1401,10 @@
       {
         "time": "2026-08-26T18:28:14.555Z",
         "value": 171
+      },
+      {
+        "time": "2026-08-26T21:02:06.092Z",
+        "value": 99
       }
     ]
   }
