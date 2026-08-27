@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-08-27T10:38:31.361Z",
+  "lastUpdate": "2026-08-27T20:46:40.790Z",
   "incidents": [
     {
       "site": "Database",
@@ -1188,56 +1188,24 @@
     "2026-08-27": {
       "sites": {
         "Database": {
-          "checks": 2,
-          "upChecks": 2,
-          "totalResponseTime": 384,
+          "checks": 3,
+          "upChecks": 3,
+          "totalResponseTime": 671,
           "downChecks": 0,
-          "avgResponseTime": 192
+          "avgResponseTime": 224
         },
         "CommentSys": {
-          "checks": 2,
-          "upChecks": 2,
-          "totalResponseTime": 547,
+          "checks": 3,
+          "upChecks": 3,
+          "totalResponseTime": 665,
           "downChecks": 0,
-          "avgResponseTime": 274
+          "avgResponseTime": 222
         }
       }
     }
   },
   "responseTimeHistory": {
     "Database": [
-      {
-        "time": "2026-08-26T10:57:50.592Z",
-        "value": 284
-      },
-      {
-        "time": "2026-08-26T11:37:35.980Z",
-        "value": 212
-      },
-      {
-        "time": "2026-08-26T12:02:38.966Z",
-        "value": 131
-      },
-      {
-        "time": "2026-08-26T13:12:20.783Z",
-        "value": 191
-      },
-      {
-        "time": "2026-08-26T14:06:44.456Z",
-        "value": 128
-      },
-      {
-        "time": "2026-08-26T15:51:43.630Z",
-        "value": 188
-      },
-      {
-        "time": "2026-08-26T16:45:30.766Z",
-        "value": 175
-      },
-      {
-        "time": "2026-08-26T18:28:14.555Z",
-        "value": 167
-      },
       {
         "time": "2026-08-26T21:02:06.092Z",
         "value": 193
@@ -1249,41 +1217,13 @@
       {
         "time": "2026-08-27T10:38:31.361Z",
         "value": 215
+      },
+      {
+        "time": "2026-08-27T20:46:40.790Z",
+        "value": 287
       }
     ],
     "CommentSys": [
-      {
-        "time": "2026-08-26T10:57:50.592Z",
-        "value": 308
-      },
-      {
-        "time": "2026-08-26T11:37:35.980Z",
-        "value": 174
-      },
-      {
-        "time": "2026-08-26T12:02:38.966Z",
-        "value": 103
-      },
-      {
-        "time": "2026-08-26T13:12:20.783Z",
-        "value": 121
-      },
-      {
-        "time": "2026-08-26T14:06:44.456Z",
-        "value": 88
-      },
-      {
-        "time": "2026-08-26T15:51:43.630Z",
-        "value": 153
-      },
-      {
-        "time": "2026-08-26T16:45:30.766Z",
-        "value": 271
-      },
-      {
-        "time": "2026-08-26T18:28:14.555Z",
-        "value": 171
-      },
       {
         "time": "2026-08-26T21:02:06.092Z",
         "value": 99
@@ -1295,6 +1235,10 @@
       {
         "time": "2026-08-27T10:38:31.361Z",
         "value": 247
+      },
+      {
+        "time": "2026-08-27T20:46:40.790Z",
+        "value": 118
       }
     ]
   }
