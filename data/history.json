@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-09-30T23:05:19.142Z",
+  "lastUpdate": "2026-10-01T02:06:52.500Z",
   "incidents": [
     {
       "site": "Database",
@@ -8,13 +8,6 @@
       "time": "2026-07-02T15:34:48.009Z",
       "error": "HTTP 302（期望 200）",
       "resolvedAt": null
-    },
-    {
-      "site": "Database",
-      "group": "Public",
-      "type": "resolved",
-      "time": "2026-07-02T17:16:54.599Z",
-      "resolvedAt": "2026-07-02T17:16:54.599Z"
     },
     {
       "site": "CommentSys",
@@ -33,24 +26,6 @@
     }
   ],
   "daily": {
-    "2026-07-02": {
-      "sites": {
-        "Database": {
-          "checks": 12,
-          "upChecks": 11,
-          "totalResponseTime": 2287,
-          "downChecks": 1,
-          "avgResponseTime": 208
-        },
-        "CommentSys": {
-          "checks": 12,
-          "upChecks": 12,
-          "totalResponseTime": 1714,
-          "downChecks": 0,
-          "avgResponseTime": 143
-        }
-      }
-    },
     "2026-07-03": {
       "sites": {
         "Database": {
@@ -1670,14 +1645,28 @@
           "avgResponseTime": 362
         }
       }
+    },
+    "2026-10-01": {
+      "sites": {
+        "Database": {
+          "checks": 1,
+          "upChecks": 1,
+          "totalResponseTime": 192,
+          "downChecks": 0,
+          "avgResponseTime": 192
+        },
+        "CommentSys": {
+          "checks": 1,
+          "upChecks": 1,
+          "totalResponseTime": 84,
+          "downChecks": 0,
+          "avgResponseTime": 84
+        }
+      }
     }
   },
   "responseTimeHistory": {
     "Database": [
-      {
-        "time": "2026-09-30T01:33:17.923Z",
-        "value": 243
-      },
       {
         "time": "2026-09-30T07:23:50.488Z",
         "value": 219
@@ -1693,13 +1682,13 @@
       {
         "time": "2026-09-30T23:05:19.142Z",
         "value": 131
+      },
+      {
+        "time": "2026-10-01T02:06:52.500Z",
+        "value": 192
       }
     ],
     "CommentSys": [
-      {
-        "time": "2026-09-30T01:33:17.923Z",
-        "value": 140
-      },
       {
         "time": "2026-09-30T07:23:50.488Z",
         "value": 1250
@@ -1715,6 +1704,10 @@
       {
         "time": "2026-09-30T23:05:19.142Z",
         "value": 92
+      },
+      {
+        "time": "2026-10-01T02:06:52.500Z",
+        "value": 84
       }
     ]
   }
