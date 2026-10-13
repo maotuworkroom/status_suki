@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-10-12T18:10:41.194Z",
+  "lastUpdate": "2026-10-13T00:45:04.051Z",
   "incidents": [
     {
       "site": "Database",
@@ -26,24 +26,6 @@
     }
   ],
   "daily": {
-    "2026-07-14": {
-      "sites": {
-        "Database": {
-          "checks": 15,
-          "upChecks": 15,
-          "totalResponseTime": 6661,
-          "downChecks": 0,
-          "avgResponseTime": 444
-        },
-        "CommentSys": {
-          "checks": 15,
-          "upChecks": 15,
-          "totalResponseTime": 2319,
-          "downChecks": 0,
-          "avgResponseTime": 155
-        }
-      }
-    },
     "2026-07-15": {
       "sites": {
         "Database": {
@@ -1663,18 +1645,28 @@
           "avgResponseTime": 151
         }
       }
+    },
+    "2026-10-13": {
+      "sites": {
+        "Database": {
+          "checks": 1,
+          "upChecks": 1,
+          "totalResponseTime": 434,
+          "downChecks": 0,
+          "avgResponseTime": 434
+        },
+        "CommentSys": {
+          "checks": 1,
+          "upChecks": 1,
+          "totalResponseTime": 203,
+          "downChecks": 0,
+          "avgResponseTime": 203
+        }
+      }
     }
   },
   "responseTimeHistory": {
     "Database": [
-      {
-        "time": "2026-10-11T18:59:11.584Z",
-        "value": 166
-      },
-      {
-        "time": "2026-10-11T22:47:47.200Z",
-        "value": 173
-      },
       {
         "time": "2026-10-12T01:51:46.802Z",
         "value": 213
@@ -1686,17 +1678,13 @@
       {
         "time": "2026-10-12T18:10:41.194Z",
         "value": 433
+      },
+      {
+        "time": "2026-10-13T00:45:04.051Z",
+        "value": 434
       }
     ],
     "CommentSys": [
-      {
-        "time": "2026-10-11T18:59:11.584Z",
-        "value": 274
-      },
-      {
-        "time": "2026-10-11T22:47:47.200Z",
-        "value": 158
-      },
       {
         "time": "2026-10-12T01:51:46.802Z",
         "value": 189
@@ -1708,6 +1696,10 @@
       {
         "time": "2026-10-12T18:10:41.194Z",
         "value": 104
+      },
+      {
+        "time": "2026-10-13T00:45:04.051Z",
+        "value": 203
       }
     ]
   }
