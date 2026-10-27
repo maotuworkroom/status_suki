@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-10-26T21:48:33.358Z",
+  "lastUpdate": "2026-10-27T00:57:37.001Z",
   "incidents": [
     {
       "site": "Database",
@@ -16,34 +16,9 @@
       "time": "2026-07-28T20:51:01.504Z",
       "error": "请求超时 (10000ms)",
       "resolvedAt": null
-    },
-    {
-      "site": "CommentSys",
-      "group": "Public",
-      "type": "resolved",
-      "time": "2026-07-28T21:57:54.947Z",
-      "resolvedAt": "2026-07-28T21:57:54.947Z"
     }
   ],
   "daily": {
-    "2026-07-28": {
-      "sites": {
-        "Database": {
-          "checks": 12,
-          "upChecks": 12,
-          "totalResponseTime": 1866,
-          "downChecks": 0,
-          "avgResponseTime": 156
-        },
-        "CommentSys": {
-          "checks": 12,
-          "upChecks": 11,
-          "totalResponseTime": 1298,
-          "downChecks": 1,
-          "avgResponseTime": 118
-        }
-      }
-    },
     "2026-07-29": {
       "sites": {
         "Database": {
@@ -1663,18 +1638,28 @@
           "avgResponseTime": 189
         }
       }
+    },
+    "2026-10-27": {
+      "sites": {
+        "Database": {
+          "checks": 1,
+          "upChecks": 1,
+          "totalResponseTime": 188,
+          "downChecks": 0,
+          "avgResponseTime": 188
+        },
+        "CommentSys": {
+          "checks": 1,
+          "upChecks": 1,
+          "totalResponseTime": 131,
+          "downChecks": 0,
+          "avgResponseTime": 131
+        }
+      }
     }
   },
   "responseTimeHistory": {
     "Database": [
-      {
-        "time": "2026-10-25T22:26:10.255Z",
-        "value": 183
-      },
-      {
-        "time": "2026-10-26T00:37:06.610Z",
-        "value": 207
-      },
       {
         "time": "2026-10-26T05:18:33.493Z",
         "value": 126
@@ -1690,17 +1675,13 @@
       {
         "time": "2026-10-26T21:48:33.358Z",
         "value": 255
+      },
+      {
+        "time": "2026-10-27T00:57:37.001Z",
+        "value": 188
       }
     ],
     "CommentSys": [
-      {
-        "time": "2026-10-25T22:26:10.255Z",
-        "value": 134
-      },
-      {
-        "time": "2026-10-26T00:37:06.610Z",
-        "value": 151
-      },
       {
         "time": "2026-10-26T05:18:33.493Z",
         "value": 242
@@ -1716,6 +1697,10 @@
       {
         "time": "2026-10-26T21:48:33.358Z",
         "value": 194
+      },
+      {
+        "time": "2026-10-27T00:57:37.001Z",
+        "value": 131
       }
     ]
   }
